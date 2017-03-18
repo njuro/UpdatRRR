@@ -1,0 +1,2 @@
+
+# Place your path to stylRRR_DB.json file (found in your firefox profile folder) above this line
