@@ -48,3 +48,4 @@ buildNumber.properties
 *.iml
 # Exclude OS X FS file
 .DS_Store
+resources/dbpath.txt
