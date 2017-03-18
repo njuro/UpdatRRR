@@ -20,7 +20,7 @@ import java.util.List;
  * @author njuro
  */
 public class UpdatRRR implements StyleManager {
-    public static final String DB_PATH = "/home/juro/.mozilla/firefox/febeprof.juro/stylRRR/stylRRR_DB.json";
+    public static final String DB_PATH = "C:\\Users\\user\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\mea8laba.default/stylRRR/stylRRR_DB.json";
     private List<Style> styles;
     private ObjectMapper mapper;
 
@@ -107,6 +107,8 @@ public class UpdatRRR implements StyleManager {
             }
         } catch (IOException ioe) {
             System.out.println("Error: Failed to connect to style page: " + ioe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            return false;
         }
         return false;
     }
