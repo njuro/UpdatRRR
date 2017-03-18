@@ -8,9 +8,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Manager for updating and editing userstyles for StylRRR addon
@@ -20,7 +18,7 @@ import java.util.List;
  * @author njuro
  */
 public class UpdatRRR implements StyleManager {
-    public static final String DB_PATH = "C:\\Users\\user\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\mea8laba.default/stylRRR/stylRRR_DB.json";
+    public static final String DB_PATH = getDbPath();
     private List<Style> styles;
     private ObjectMapper mapper;
 
@@ -137,5 +135,14 @@ public class UpdatRRR implements StyleManager {
 
     public ObjectMapper getMapper() {
         return mapper;
+    }
+
+    private static String getDbPath() {
+        try(Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
+            return scanner.nextLine().trim();
+        } catch (IOException ioe) {
+            System.err.println("-");
+        }
+        return "-";
     }
 }
