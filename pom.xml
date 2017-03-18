@@ -12,7 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <exec.mainClass>com.github.njuro.UpdatRRR</exec.mainClass>
+        <exec.mainClass>com.github.njuro.updatrrr.UpdatRRR</exec.mainClass>
     </properties>
 
     <build>

@@ -1,4 +1,4 @@
-package com.github.njuro;
+package com.github.njuro.updatrrr;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.JsonNode;

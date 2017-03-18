@@ -1,4 +1,4 @@
-package com.github.njuro;
+package com.github.njuro.updatrrr;
 
 /**
  * Styles manager interface

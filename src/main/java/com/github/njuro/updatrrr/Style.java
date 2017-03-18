@@ -1,4 +1,4 @@
-package com.github.njuro;
+package com.github.njuro.updatrrr;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
