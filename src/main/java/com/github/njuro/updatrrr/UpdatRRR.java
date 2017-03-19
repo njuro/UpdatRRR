@@ -79,6 +79,10 @@ public class UpdatRRR implements StyleManager {
 
     @Override
     public boolean addStyle(Style style) {
+        if (styles != null) {
+            style.setDate(Style.parseDateToString(new Date()));
+            styles.add(style);
+        }
         return false;
     }
 
@@ -88,7 +92,7 @@ public class UpdatRRR implements StyleManager {
             if (style.getUrl() == null || style.getUrl().equals("-")) return false;
             Document stylePage = Jsoup.connect(style.getUrl()).get();
             String updated = stylePage.select("#style-author-info tr:nth-child(4) td").text();
-            if (Style.parseDate(updated).compareTo(style.getDate()) > 0) {
+            if (Style.parseStringToDate(updated).compareTo(style.getDate()) > 0) {
                 String updatedCode = "";
                 URL styleURL = new URL(style.getUrl() + ".css");
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(styleURL.openStream()))) {
@@ -124,9 +128,13 @@ public class UpdatRRR implements StyleManager {
         System.out.printf("Update complete. Updated: %d, Not updated: %d\n", count, styles.size() - count);
     }
 
+    //TODO: implement
     @Override
     public boolean removeStyle(Style style) {
-        return false;
+        if (style == null) {
+            return false;
+        }
+        return styles.remove(style);
     }
 
     public List<Style> getStyles() {
