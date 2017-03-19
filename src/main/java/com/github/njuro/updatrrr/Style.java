@@ -27,7 +27,7 @@ public class Style {
     }
 
     //converts string representation of date to date object
-    public static Date parseDate(String date) {
+    public static Date parseStringToDate(String date) {
         if (date == null) {
             return new Date(0L);
         }
@@ -38,6 +38,15 @@ public class Style {
             System.err.printf("Date %s is in invald format (using pattern: %s)\n", date, DATE_PATTERN);
             return new Date(0L);
         }
+    }
+
+    //converts date to string representation
+    public static String parseDateToString(Date date) {
+        if (date == null) {
+            return parseDateToString(new Date(0L));
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN, Locale.ENGLISH);
+        return dateFormatter.format(date);
     }
 
     public int getId() {
@@ -73,7 +82,7 @@ public class Style {
     }
 
     public Date getDate() {
-        return Style.parseDate(datE);
+        return Style.parseStringToDate(datE);
     }
 
     public void setDate(String datE) {
