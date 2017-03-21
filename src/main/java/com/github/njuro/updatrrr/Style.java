@@ -90,7 +90,7 @@ public class Style {
     }
 
     public String getDateString() {
-        return datE;
+        return (datE == null || datE.isEmpty()) ? "Unknown" : datE;
     }
 
     public String getCode() {
@@ -111,6 +111,6 @@ public class Style {
 
     @Override
     public String toString() {
-        return String.format("%s | %s | CURRENT VERSION: %s", this.namE, this.url, this.datE);
+        return String.format("%s | %s | CURRENT VERSION: %s", this.namE, this.url, getDateString());
     }
 }
