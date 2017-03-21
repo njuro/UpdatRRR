@@ -93,6 +93,7 @@ public class EventController {
         selectedStyle.setAuthor(tfAuthor.getText().trim());
         selectedStyle.setUrl(tfUrl.getText().trim());
         selectedStyle.setEnabled(chbEnabled.isSelected());
+        selectedStyle.setCode(taCode.getText());
         btSave.setDisable(true);
         manager.saveStyles(UpdatRRR.DB_PATH);
         initializeStyles();
