@@ -2,10 +2,13 @@ package com.github.njuro.updatrrr.app;
 
 import com.github.njuro.updatrrr.Style;
 import com.github.njuro.updatrrr.UpdatRRR;
+import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
+import com.github.njuro.updatrrr.exceptions.StyleException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.util.Callback;
 
 /**
@@ -24,6 +27,9 @@ public class EventController {
 
     @FXML
     private Button btSave;
+
+    @FXML
+    private Button btUpdate;
 
     @FXML
     private TextField tfName;
@@ -49,7 +55,7 @@ public class EventController {
     @FXML
     private Label lbStatusRight;
 
-
+    private Style selectedStyle;
 
     @FXML
     public void initialize() {
@@ -63,14 +69,16 @@ public class EventController {
         cbStyleSelect.setCellFactory(factory);
         cbStyleSelect.setButtonCell(factory.call(null));
         manager = new UpdatRRR();
-        initializeStyles();
+        if (!initializeStyles()) {
+            return;
+        }
         cbStyleSelect.setDisable(false);
         lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() +" styles");
     }
 
     @FXML
     private void changeStyle() {
-        Style selectedStyle = (Style)cbStyleSelect.getSelectionModel().getSelectedItem();
+        selectedStyle = (Style)cbStyleSelect.getSelectionModel().getSelectedItem();
         if (selectedStyle == null) {
             return;
         }
@@ -85,7 +93,6 @@ public class EventController {
 
     @FXML
     private void btSaveStyles() {
-        Style selectedStyle = (Style)cbStyleSelect.getSelectionModel().getSelectedItem();
         if (selectedStyle == null) {
             return;
         }
@@ -95,18 +102,95 @@ public class EventController {
         selectedStyle.setEnabled(chbEnabled.isSelected());
         selectedStyle.setCode(taCode.getText());
         btSave.setDisable(true);
-        manager.saveStyles(UpdatRRR.DB_PATH);
-        initializeStyles();
+        try {
+            manager.saveStyles(UpdatRRR.DB_PATH);
+        } catch (DatabaseFileException dbe) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Saving failed");
+            alert.setHeaderText("Error saving database");
+            alert.setContentText("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": " + dbe.getMessage());
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.initOwner(alert.getOwner());
+            alert.showAndWait();
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Saved successfully");
+        alert.setHeaderText("");
+        alert.setContentText("Database successfully saved");
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.initOwner(alert.getOwner());
+        alert.showAndWait();
+        if (!initializeStyles()) {
+            return;
+        }
         btSave.setDisable(false);
 
     }
 
-    private void initializeStyles() {
-        manager.loadStyles(UpdatRRR.DB_PATH);
-        int index = cbStyleSelect.getSelectionModel().getSelectedIndex();
-        cbStyleSelect.getItems().clear();
-        cbStyleSelect.setItems(FXCollections.observableList(manager.getStyles()));
-        cbStyleSelect.getSelectionModel().select(index);
+    @FXML
+    private void btUpdateStyle() {
+        if (selectedStyle == null) {
+            return;
+        }
+        String result;
+        try {
+            result = manager.updateStyle(selectedStyle);
+        }
+        catch (StyleException se) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Update failed");
+            alert.setHeaderText("Update failed");
+            alert.setContentText("Update of " + se.getStyle().getName() + " failed: " + se.getMessage());
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.initOwner(alert.getOwner());
+            alert.showAndWait();
+            return;
+        }
+        if (!result.equals("-")) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Updated successfully");
+            alert.setHeaderText(selectedStyle.getName() + " updated!");
+            alert.setContentText("Style " + selectedStyle.getName() + "was updated from version " + result + "to " + selectedStyle.getDateString());
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.initOwner(alert.getOwner());
+            alert.showAndWait();
+            initializeStyles();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Update not found");
+            alert.setHeaderText("Update not found");
+            alert.setContentText(selectedStyle.getName() + " is already the most recent version (" + selectedStyle.getDateString() + ")");
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.initOwner(alert.getOwner());
+            alert.showAndWait();
+        }
+    }
+
+    private boolean initializeStyles() {
+        try {
+            manager.loadStyles(UpdatRRR.DB_PATH);
+            int index = cbStyleSelect.getSelectionModel().getSelectedIndex();
+            cbStyleSelect.getItems().clear();
+            cbStyleSelect.setItems(FXCollections.observableList(manager.getStyles()));
+            cbStyleSelect.getSelectionModel().select(index);
+        } catch (DatabaseFileException dbe) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database file error");
+            alert.setHeaderText("Error loading database");
+            alert.setContentText("Error loading file: " + dbe.getMessage());
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.initOwner(alert.getOwner());
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
 
 }
