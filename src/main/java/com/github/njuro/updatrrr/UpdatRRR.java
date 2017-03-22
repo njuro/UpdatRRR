@@ -3,9 +3,12 @@ package com.github.njuro.updatrrr;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
+import com.github.njuro.updatrrr.exceptions.StyleException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -19,6 +22,7 @@ import java.util.*;
  */
 public class UpdatRRR implements StyleManager {
     public static final String DB_PATH = getDbPath();
+    private File dbFile;
     private List<Style> styles;
     private ObjectMapper mapper;
 
@@ -41,39 +45,37 @@ public class UpdatRRR implements StyleManager {
     }
 
     @Override
-    public boolean loadStyles(String filePath) {
+    public boolean loadStyles(String filePath) throws DatabaseFileException {
         try {
-            File dbFile = new File(filePath);
             JsonNode root = mapper.readTree(dbFile);
             styles = new ArrayList<>();
+            //This exception rethrowing is a mess, but apparently there is no easy way to throw checked exceptions inside
+            //lambda expressions. Thanks Oracle.
             root.forEach(node -> {
                 try {
                     Style style = mapper.readValue(node.traverse(), Style.class);
                     styles.add(style);
                 } catch (IOException ioe) {
-                    System.err.println("Failed to read node: " + ioe.getMessage());
+                    throw new IllegalArgumentException("Failed to read data, possible corruption");
                 }
             });
             styles.sort(Comparator.comparing(Style::getDate));
-        } catch (FileNotFoundException fnfe) {
-            System.err.printf("%s - Database file not found\n", DB_PATH);
-            return false;
-        } catch (IOException ioe) {
-            System.err.printf("%s - Failed to read file: %s\n", DB_PATH, ioe.getMessage()/**/);
-            return false;
+            return true;
+        } catch (FileNotFoundException | NullPointerException e) {
+            throw new DatabaseFileException("File not found", dbFile);
+        } catch (IOException | IllegalArgumentException e) {
+            throw new DatabaseFileException(e.getMessage(), dbFile);
         }
-        return true;
     }
 
     @Override
-    public boolean saveStyles(String filePath) {
+    public boolean saveStyles(String filePath) throws DatabaseFileException {
         try {
             styles.sort(Comparator.comparing(Style::getDate).reversed());
             getMapper().writeValue(new File(filePath), getStyles());
             return true;
         } catch (IOException ioe) {
-            System.err.println("Saving file failed: " + ioe.getMessage());
-            return false;
+            throw new DatabaseFileException("Failed to save styles: " + ioe.getMessage(), dbFile);
         }
     }
 
@@ -87,11 +89,15 @@ public class UpdatRRR implements StyleManager {
     }
 
     @Override
-    public boolean updateStyle(Style style) {
+    public String updateStyle(Style style) throws StyleException {
         try {
-            if (style.getUrl() == null || style.getUrl().equals("-")) return false;
+            if (style.getUrl() == null || style.getUrl().equals("-") ||
+                   !style.getUrl().toLowerCase().contains("://userstyles.org")) {
+                throw new StyleException("Invalid userstyles.org URL", style);
+            }
             Document stylePage = Jsoup.connect(style.getUrl()).get();
             String updated = stylePage.select("#style-author-info tr:nth-child(4) td").text();
+            String old = style.getDateString();
             if (Style.parseStringToDate(updated).compareTo(style.getDate()) > 0) {
                 String updatedCode = "";
                 URL styleURL = new URL(style.getUrl() + ".css");
@@ -101,34 +107,31 @@ public class UpdatRRR implements StyleManager {
                         updatedCode += line + System.lineSeparator();
                     }
                 }
-                System.out.printf("Updated style %s with version from %s (before: %s)\n", style.getName(), updated,
-                        style.getDateString());
                 style.setDate(updated);
                 style.setCode(updatedCode);
-                return true;
+                return old;
             }
         } catch (IOException ioe) {
-            System.out.println("Error: Failed to connect to style page: " + ioe.getMessage());
+            throw new StyleException("Connection failed: " + ioe.getMessage(), style);
         } catch (IllegalArgumentException iae) {
-            return false;
+            throw new StyleException("Illegal argument: " + iae.getMessage(), style);
         }
-        return false;
+        return "-";
     }
 
     @Override
-    public void updateAllStyles() {
-        System.out.printf("Searching updates for %d styles.\n", styles.size());
-        int count = 0;
+    public List<StyleException> updateAllStyles() {
+        List<StyleException> exceptions = new ArrayList<>();
         for(Style style: styles) {
-            boolean updated = updateStyle(style);
-            if (updated) {
-                count++;
+            try {
+                updateStyle(style);
+            } catch (StyleException se) {
+                exceptions.add(se);
             }
         }
-        System.out.printf("Update complete. Updated: %d, Not updated: %d\n", count, styles.size() - count);
+        return exceptions;
     }
 
-    //TODO: implement
     @Override
     public boolean removeStyle(Style style) {
         if (style == null) {

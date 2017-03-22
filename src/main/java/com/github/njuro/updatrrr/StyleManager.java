@@ -1,5 +1,11 @@
 package com.github.njuro.updatrrr;
 
+import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
+import com.github.njuro.updatrrr.exceptions.StyleException;
+
+import javax.xml.crypto.Data;
+import java.util.List;
+
 /**
  * Styles manager interface
  *
@@ -13,7 +19,7 @@ public interface StyleManager {
      * @param filePath Path to StylRRR database
      * @return true if styles were successfully loaded, false if something happened
      */
-    boolean loadStyles(String filePath);
+    boolean loadStyles(String filePath) throws DatabaseFileException;
 
     /**
      * Saves edited, updated styles back into database file
@@ -22,26 +28,28 @@ public interface StyleManager {
      *
      * @return true if styles were successfully loaded, false if something happened
      */
-    boolean saveStyles(String filePath);
+    boolean saveStyles(String filePath) throws DatabaseFileException;
 
     /**
      * Adds new style to database
-     * <p>
-     * -- NOT IMPLEMENTED YET --
+     *
+     * @param style style to be added
      */
     boolean addStyle(Style style);
 
     /**
      * Finds if more recent version of style is available on userstyles.org and replaces the code
      *
-     * @return true if update was found and successfully applied, false otherwise
+     * @return date associated with style before update, "-" if update failed
      */
-    boolean updateStyle(Style style);
+    String updateStyle(Style style) throws StyleException;
 
     /**
      * Updates all styles
+     *
+     * @return List of exceptions throwed during updates;
      * */
-    void updateAllStyles();
+    List<StyleException> updateAllStyles();
 
     /**
      * Removes style from database
