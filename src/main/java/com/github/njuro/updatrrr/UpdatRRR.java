@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class UpdatRRR implements StyleManager {
     public static final String DB_PATH = getDbPath();
-    private File dbFile;
+    private File dbFile = new File(DB_PATH);
     private List<Style> styles;
     private ObjectMapper mapper;
 
@@ -61,9 +61,7 @@ public class UpdatRRR implements StyleManager {
             });
             styles.sort(Comparator.comparing(Style::getDate));
             return true;
-        } catch (FileNotFoundException | NullPointerException e) {
-            throw new DatabaseFileException("File not found", dbFile);
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new DatabaseFileException(e.getMessage(), dbFile);
         }
     }
@@ -75,7 +73,7 @@ public class UpdatRRR implements StyleManager {
             getMapper().writeValue(new File(filePath), getStyles());
             return true;
         } catch (IOException ioe) {
-            throw new DatabaseFileException("Failed to save styles: " + ioe.getMessage(), dbFile);
+            throw new DatabaseFileException(ioe.getMessage(), dbFile);
         }
     }
 
