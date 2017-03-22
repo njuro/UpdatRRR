@@ -8,8 +8,10 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import javax.xml.crypto.Data;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
 
@@ -89,8 +91,7 @@ public class UpdatRRR implements StyleManager {
     @Override
     public String updateStyle(Style style) throws StyleException {
         try {
-            if (style.getUrl() == null || style.getUrl().equals("-") ||
-                   !style.getUrl().toLowerCase().contains("://userstyles.org")) {
+            if (style.getUrl() == null || !style.getUrl().toLowerCase().contains("://userstyles.org")) {
                 throw new StyleException("Invalid userstyles.org URL", style);
             }
             Document stylePage = Jsoup.connect(style.getUrl()).get();
@@ -114,13 +115,13 @@ public class UpdatRRR implements StyleManager {
         } catch (IllegalArgumentException iae) {
             throw new StyleException("Illegal argument: " + iae.getMessage(), style);
         }
-        return "-";
+        return null;
     }
 
     @Override
     public List<StyleException> updateAllStyles() {
         List<StyleException> exceptions = new ArrayList<>();
-        for(Style style: styles) {
+        for (Style style : styles) {
             try {
                 updateStyle(style);
             } catch (StyleException se) {
@@ -147,7 +148,7 @@ public class UpdatRRR implements StyleManager {
     }
 
     private static String getDbPath() {
-        try(Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
+        try (Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
             return scanner.nextLine().trim();
         } catch (IOException ioe) {
             System.err.println("-");

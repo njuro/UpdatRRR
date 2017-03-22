@@ -73,12 +73,13 @@ public class EventController {
             return;
         }
         cbStyleSelect.setDisable(false);
-        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() +" styles");
+        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles");
     }
 
     @FXML
-    private void changeStyle() {
-        selectedStyle = (Style)cbStyleSelect.getSelectionModel().getSelectedItem();
+    private void refreshStyle() {
+        cbStyleSelect.setItems(FXCollections.observableList(manager.getStyles()));
+        selectedStyle = (Style) cbStyleSelect.getSelectionModel().getSelectedItem();
         if (selectedStyle == null) {
             return;
         }
@@ -109,23 +110,15 @@ public class EventController {
             alert.setTitle("Saving failed");
             alert.setHeaderText("Error saving database");
             alert.setContentText("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": " + dbe.getMessage());
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
+            setUpAlert(alert);
             return;
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Saved successfully");
         alert.setHeaderText("");
         alert.setContentText("Database successfully saved");
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.initOwner(alert.getOwner());
-        alert.showAndWait();
-        if (!initializeStyles()) {
-            return;
-        }
+        setUpAlert(alert);
+        refreshStyle();
         btSave.setDisable(false);
 
     }
@@ -138,47 +131,35 @@ public class EventController {
         String result;
         try {
             result = manager.updateStyle(selectedStyle);
-        }
-        catch (StyleException se) {
+        } catch (StyleException se) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Update failed");
             alert.setHeaderText("Update failed");
             alert.setContentText("Update of " + se.getStyle().getName() + " failed: " + se.getMessage());
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
+            setUpAlert(alert);
             return;
         }
-        if (!result.equals("-")) {
+        if (result != null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Updated successfully");
             alert.setHeaderText(selectedStyle.getName() + " updated!");
-            alert.setContentText("Style " + selectedStyle.getName() + "was updated from version " + result + "to " + selectedStyle.getDateString());
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
-            initializeStyles();
+            alert.setContentText("Style " + selectedStyle.getName() + " was updated from version " + result +
+                    " to version  " + selectedStyle.getDateString());
+            setUpAlert(alert);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Update not found");
             alert.setHeaderText("Update not found");
             alert.setContentText(selectedStyle.getName() + " is already the most recent version (" + selectedStyle.getDateString() + ")");
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
+            setUpAlert(alert);
         }
+        refreshStyle();
     }
 
     private boolean initializeStyles() {
         try {
             manager.loadStyles(UpdatRRR.DB_PATH);
-            int index = cbStyleSelect.getSelectionModel().getSelectedIndex();
-            cbStyleSelect.getItems().clear();
-            cbStyleSelect.setItems(FXCollections.observableList(manager.getStyles()));
-            cbStyleSelect.getSelectionModel().select(index);
+            refreshStyle();
         } catch (DatabaseFileException dbe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Database file error");
@@ -191,6 +172,13 @@ public class EventController {
             return false;
         }
         return true;
+    }
+
+    private void setUpAlert(Alert alert) {
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.initOwner(alert.getOwner());
+        alert.showAndWait();
     }
 
 }
