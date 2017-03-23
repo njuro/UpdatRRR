@@ -10,10 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import javafx.util.Callback;
-
-import javax.xml.crypto.Data;
 
 /**
  * JavaFX event controller for GUI of UpdatRRR
@@ -171,7 +168,7 @@ public class EventController {
         int notUpdated = 0;
         int failed = 0;
         String messages = "";
-        for (Style style: manager.getStyles()) {
+        for (Style style : manager.getStyles()) {
             try {
                 messages += "- " + style.getName() + ": ";
                 String result = manager.updateStyle(style);

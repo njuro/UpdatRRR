@@ -3,7 +3,6 @@ package com.github.njuro.updatrrr;
 import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
 import com.github.njuro.updatrrr.exceptions.StyleException;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 /**
@@ -25,7 +24,6 @@ public interface StyleManager {
      * Saves edited, updated styles back into database file
      *
      * @param filePath Path to StylRRR database
-     *
      * @return true if styles were successfully loaded, false if something happened
      */
     boolean saveStyles(String filePath) throws DatabaseFileException;
@@ -48,7 +46,7 @@ public interface StyleManager {
      * Updates all styles
      *
      * @return List of exceptions throwed during updates;
-     * */
+     */
     List<StyleException> updateAllStyles();
 
     /**

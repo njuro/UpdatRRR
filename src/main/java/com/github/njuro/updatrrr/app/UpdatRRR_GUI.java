@@ -11,6 +11,10 @@ import javafx.stage.Stage;
  * @author njuro
  */
 public class UpdatRRR_GUI extends Application {
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
@@ -20,9 +24,5 @@ public class UpdatRRR_GUI extends Application {
         stage.setTitle("UpdatRRR");
         stage.show();
 
-    }
-
-    public static void main(String[] args) {
-        Application.launch(args);
     }
 }

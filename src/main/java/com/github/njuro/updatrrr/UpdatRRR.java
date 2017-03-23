@@ -46,6 +46,15 @@ public class UpdatRRR implements StyleManager {
         manager.saveStyles(DB_PATH);
     }
 
+    private static String getDbPath() {
+        try (Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
+            return scanner.nextLine().trim();
+        } catch (IOException ioe) {
+            System.err.println("-");
+        }
+        return "-";
+    }
+
     @Override
     public boolean loadStyles(String filePath) throws DatabaseFileException {
         try {
@@ -145,14 +154,5 @@ public class UpdatRRR implements StyleManager {
 
     public ObjectMapper getMapper() {
         return mapper;
-    }
-
-    private static String getDbPath() {
-        try (Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
-            return scanner.nextLine().trim();
-        } catch (IOException ioe) {
-            System.err.println("-");
-        }
-        return "-";
     }
 }
