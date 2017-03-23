@@ -77,7 +77,7 @@ public class EventController {
             return;
         }
         cbStyleSelect.setDisable(false);
-        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles");
+        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " + UpdatRRR.DB_PATH);
     }
 
     @FXML
