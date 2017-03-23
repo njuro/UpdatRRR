@@ -196,7 +196,6 @@ public class EventController {
                 manager.getStyles().size(), updated, notUpdated, failed));
         TextArea results = new TextArea(messages);
         results.setEditable(false);
-        results.setWrapText(true);
         GridPane.setVgrow(results, Priority.ALWAYS);
         GridPane.setHgrow(results, Priority.ALWAYS);
         GridPane expContent = new GridPane();
