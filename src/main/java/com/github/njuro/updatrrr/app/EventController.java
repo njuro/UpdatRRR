@@ -8,8 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 import javafx.util.Callback;
+
+import javax.xml.crypto.Data;
 
 /**
  * JavaFX event controller for GUI of UpdatRRR
@@ -30,6 +34,9 @@ public class EventController {
 
     @FXML
     private Button btUpdate;
+
+    @FXML
+    private Button btUpdateAll;
 
     @FXML
     private TextField tfName;
@@ -94,14 +101,13 @@ public class EventController {
 
     @FXML
     private void btSaveStyles() {
-        if (selectedStyle == null) {
-            return;
+        if (selectedStyle != null) {
+            selectedStyle.setName(tfName.getText().trim());
+            selectedStyle.setAuthor(tfAuthor.getText().trim());
+            selectedStyle.setUrl(tfUrl.getText().trim());
+            selectedStyle.setEnabled(chbEnabled.isSelected());
+            selectedStyle.setCode(taCode.getText());
         }
-        selectedStyle.setName(tfName.getText().trim());
-        selectedStyle.setAuthor(tfAuthor.getText().trim());
-        selectedStyle.setUrl(tfUrl.getText().trim());
-        selectedStyle.setEnabled(chbEnabled.isSelected());
-        selectedStyle.setCode(taCode.getText());
         btSave.setDisable(true);
         try {
             manager.saveStyles(UpdatRRR.DB_PATH);
@@ -112,6 +118,8 @@ public class EventController {
             alert.setContentText("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": " + dbe.getMessage());
             setUpAlert(alert);
             return;
+        } finally {
+            btSave.setDisable(false);
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Saved successfully");
@@ -119,8 +127,6 @@ public class EventController {
         alert.setContentText("Database successfully saved");
         setUpAlert(alert);
         refreshStyle();
-        btSave.setDisable(false);
-
     }
 
     @FXML
@@ -130,14 +136,17 @@ public class EventController {
         }
         String result;
         try {
+            btUpdate.setDisable(true);
             result = manager.updateStyle(selectedStyle);
         } catch (StyleException se) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Update failed");
             alert.setHeaderText("Update failed");
-            alert.setContentText("Update of " + se.getStyle().getName() + " failed: " + se.getMessage());
+            alert.setContentText("Getting update for " + se.getStyle().getName() + " failed: " + se.getMessage());
             setUpAlert(alert);
             return;
+        } finally {
+            btUpdate.setDisable(false);
         }
         if (result != null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -146,6 +155,7 @@ public class EventController {
             alert.setContentText("Style " + selectedStyle.getName() + " was updated from version " + result +
                     " to version  " + selectedStyle.getDateString());
             setUpAlert(alert);
+            btSaveStyles();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Update not found");
@@ -153,7 +163,50 @@ public class EventController {
             alert.setContentText(selectedStyle.getName() + " is already the most recent version (" + selectedStyle.getDateString() + ")");
             setUpAlert(alert);
         }
-        refreshStyle();
+    }
+
+    @FXML
+    private void btUpdateAllStyles() {
+        int updated = 0;
+        int notUpdated = 0;
+        int failed = 0;
+        String messages = "";
+        for (Style style: manager.getStyles()) {
+            try {
+                messages += "- " + style.getName() + ": ";
+                String result = manager.updateStyle(style);
+                if (result == null) {
+                    messages += "Already the most recent version";
+                    notUpdated++;
+                } else {
+                    messages += "Updated from version " + result + " to " + style.getDateString();
+                    updated++;
+                }
+            } catch (StyleException se) {
+                messages += "Getting update failed: " + se.getMessage();
+                failed++;
+            } finally {
+                messages += "\n";
+            }
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Update completed");
+        alert.setHeaderText("All updated completes");
+        Label label = new Label(String.format("Styles: %d | Updated: %d | Not updated: %d | Failed: %d",
+                manager.getStyles().size(), updated, notUpdated, failed));
+        TextArea results = new TextArea(messages);
+        results.setEditable(false);
+        results.setWrapText(true);
+        GridPane.setVgrow(results, Priority.ALWAYS);
+        GridPane.setHgrow(results, Priority.ALWAYS);
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.setVgap(10);
+        expContent.add(label, 0, 0);
+        expContent.add(results, 0, 1);
+        alert.getDialogPane().setContent(expContent);
+        setUpAlert(alert);
+        btSaveStyles();
     }
 
     private boolean initializeStyles() {

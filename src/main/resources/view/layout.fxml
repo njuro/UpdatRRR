@@ -20,13 +20,15 @@
 
 <VBox fx:id="vbMain" minHeight="500.0" minWidth="800.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@custom.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.njuro.updatrrr.app.EventController">
   <children>
-      <HBox prefHeight="26.0" prefWidth="900.0">
+      <HBox prefHeight="26.0" prefWidth="900.0" spacing="10.0">
          <children>
-            <ComboBox fx:id="cbStyleSelect" disable="true" onAction="#changeStyle" prefHeight="26.0" prefWidth="390.0" promptText="-- select style --">
+            <ComboBox fx:id="cbStyleSelect" disable="true" onAction="#refreshStyle" prefHeight="26.0" prefWidth="390.0" promptText="-- select style --">
                <HBox.margin>
-                  <Insets right="10.0" />
+                  <Insets />
                </HBox.margin></ComboBox>
             <Button fx:id="btSave" mnemonicParsing="false" onAction="#btSaveStyles" text="Save" />
+            <Button fx:id="btUpdate" mnemonicParsing="false" onAction="#btUpdateStyle" text="Update" />
+            <Button fx:id="btUpdateAll" mnemonicParsing="false" onAction="#btUpdateAllStyles" text="Update all" />
          </children>
          <padding>
             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
