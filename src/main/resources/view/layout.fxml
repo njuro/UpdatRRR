@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -18,7 +19,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vbMain" minHeight="500.0" minWidth="800.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@custom.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.njuro.updatrrr.app.EventController">
+<VBox fx:id="vbMain" minHeight="500.0" minWidth="800.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.njuro.updatrrr.app.EventController">
   <children>
       <HBox prefHeight="26.0" prefWidth="900.0" spacing="10.0">
          <children>
@@ -29,6 +30,7 @@
             <Button fx:id="btSave" mnemonicParsing="false" onAction="#btSaveStyles" text="Save" />
             <Button fx:id="btUpdate" mnemonicParsing="false" onAction="#btUpdateStyle" text="Update" />
             <Button fx:id="btUpdateAll" mnemonicParsing="false" onAction="#btUpdateAllStyles" text="Update all" />
+            <Button fx:id="btSettings" mnemonicParsing="false" onAction="#btOpenSettings" text="Settings" />
          </children>
          <padding>
             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
@@ -149,4 +151,8 @@
       </padding>
     </HBox>
   </children>
+   <stylesheets>
+      <URL value="@custom.css" />
+      <URL value="@modena_dark.css" />
+   </stylesheets>
 </VBox>
