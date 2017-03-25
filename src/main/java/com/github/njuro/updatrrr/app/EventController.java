@@ -76,11 +76,11 @@ public class EventController {
         cbStyleSelect.setButtonCell(factory.call(null));
         try {
             manager = new UpdatRRR();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Properties file error");
             alert.setHeaderText("Error loading properties");
-            alert.setContentText("Error loading properties file: " +ioe.getMessage());
+            alert.setContentText("Error loading properties file: " + ioe.getMessage());
             setUpAlert(alert);
             System.exit(1);
         }
@@ -231,6 +231,7 @@ public class EventController {
         }
         return true;
     }
+
     @FXML
     private void btOpenSettings() {
 

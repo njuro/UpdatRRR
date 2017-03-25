@@ -27,7 +27,7 @@ public class UpdatRRR implements StyleManager {
 
     /**
      * @throws IOException when properties file is missing, or corrupted
-     * */
+     */
     public UpdatRRR() throws IOException {
         settings.load(new FileInputStream("updatrrr.properties"));
         dbFile = new File(settings.getProperty("dbpath"));
