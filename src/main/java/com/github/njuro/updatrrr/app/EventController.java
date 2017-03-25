@@ -82,6 +82,7 @@ public class EventController {
             alert.setHeaderText("Error loading properties");
             alert.setContentText("Error loading properties file: " +ioe.getMessage());
             setUpAlert(alert);
+            System.exit(1);
         }
         if (!initializeStyles()) {
             return;
