@@ -8,10 +8,7 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -23,12 +20,17 @@ import java.util.*;
  * @author njuro
  */
 public class UpdatRRR implements StyleManager {
-    public static final String DB_PATH = getDbPath();
-    private File dbFile = new File(DB_PATH);
+    private Properties settings = new Properties();
+    private File dbFile;
     private List<Style> styles;
     private ObjectMapper mapper;
 
-    public UpdatRRR() {
+    /**
+     * @throws IOException when properties file is missing, or corrupted
+     * */
+    public UpdatRRR() throws IOException {
+        settings.load(new FileInputStream("updatrrr.properties"));
+        dbFile = new File(settings.getProperty("dbpath"));
         mapper = new ObjectMapper();
         //configure mapper to load values based on field names and not getters/setters
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -41,22 +43,13 @@ public class UpdatRRR implements StyleManager {
 
     public static void main(String[] args) throws Exception {
         UpdatRRR manager = new UpdatRRR();
-        manager.loadStyles(DB_PATH);
+        manager.loadStyles();
         manager.updateAllStyles();
-        manager.saveStyles(DB_PATH);
-    }
-
-    private static String getDbPath() {
-        try (Scanner scanner = new Scanner(new File(UpdatRRR.class.getClassLoader().getResource("dbpath.txt").getFile()))) {
-            return scanner.nextLine().trim();
-        } catch (IOException ioe) {
-            System.err.println("-");
-        }
-        return "-";
+        manager.saveStyles();
     }
 
     @Override
-    public boolean loadStyles(String filePath) throws DatabaseFileException {
+    public boolean loadStyles() throws DatabaseFileException {
         try {
             JsonNode root = mapper.readTree(dbFile);
             styles = new ArrayList<>();
@@ -78,10 +71,10 @@ public class UpdatRRR implements StyleManager {
     }
 
     @Override
-    public boolean saveStyles(String filePath) throws DatabaseFileException {
+    public boolean saveStyles() throws DatabaseFileException {
         try {
             styles.sort(Comparator.comparing(Style::getDate).reversed());
-            getMapper().writeValue(new File(filePath), getStyles());
+            getMapper().writeValue(dbFile, getStyles());
             return true;
         } catch (IOException ioe) {
             throw new DatabaseFileException(ioe.getMessage(), dbFile);
@@ -146,6 +139,10 @@ public class UpdatRRR implements StyleManager {
             return false;
         }
         return styles.remove(style);
+    }
+
+    public Properties getSettings() {
+        return settings;
     }
 
     public List<Style> getStyles() {

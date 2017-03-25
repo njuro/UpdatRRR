@@ -12,6 +12,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Callback;
 
+import java.io.IOException;
+
 /**
  * JavaFX event controller for GUI of UpdatRRR
  *
@@ -72,12 +74,21 @@ public class EventController {
         };
         cbStyleSelect.setCellFactory(factory);
         cbStyleSelect.setButtonCell(factory.call(null));
-        manager = new UpdatRRR();
+        try {
+            manager = new UpdatRRR();
+        } catch(IOException ioe) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Properties file error");
+            alert.setHeaderText("Error loading properties");
+            alert.setContentText("Error loading properties file: " +ioe.getMessage());
+            setUpAlert(alert);
+        }
         if (!initializeStyles()) {
             return;
         }
         cbStyleSelect.setDisable(false);
-        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " + UpdatRRR.DB_PATH);
+        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
+                manager.getSettings().getProperty("dbpath"));
     }
 
     @FXML
@@ -107,7 +118,7 @@ public class EventController {
         }
         btSave.setDisable(true);
         try {
-            manager.saveStyles(UpdatRRR.DB_PATH);
+            manager.saveStyles();
         } catch (DatabaseFileException dbe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Saving failed");
@@ -207,23 +218,27 @@ public class EventController {
 
     private boolean initializeStyles() {
         try {
-            manager.loadStyles(UpdatRRR.DB_PATH);
+            manager.loadStyles();
             refreshStyle();
         } catch (DatabaseFileException dbe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Database file error");
             alert.setHeaderText("Error loading database");
             alert.setContentText("Error loading file: " + dbe.getMessage());
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
+            setUpAlert(alert);
             return false;
         }
         return true;
     }
+    @FXML
+    private void btOpenSettings() {
+
+    }
 
     private void setUpAlert(Alert alert) {
+        if (alert == null) {
+            return;
+        }
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
         alert.initOwner(alert.getOwner());

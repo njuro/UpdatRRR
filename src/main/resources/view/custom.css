@@ -3,6 +3,11 @@
     -fx-text-fill: #ffebcd;
 }
 
+.text-field {
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffebcd;
+}
+
 
 .text-area .content {
     -fx-background-color: text-area-background ;

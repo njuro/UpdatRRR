@@ -15,18 +15,16 @@ public interface StyleManager {
     /**
      * Loads userstyles from StylRRR database file. Usually found in {FIREFOX_PROFILE_PATH}/stylRRR/stylRRR_DB.json
      *
-     * @param filePath Path to StylRRR database
      * @return true if styles were successfully loaded, false if something happened
      */
-    boolean loadStyles(String filePath) throws DatabaseFileException;
+    boolean loadStyles() throws DatabaseFileException;
 
     /**
      * Saves edited, updated styles back into database file
      *
-     * @param filePath Path to StylRRR database
      * @return true if styles were successfully loaded, false if something happened
      */
-    boolean saveStyles(String filePath) throws DatabaseFileException;
+    boolean saveStyles() throws DatabaseFileException;
 
     /**
      * Adds new style to database
