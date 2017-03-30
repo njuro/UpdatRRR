@@ -152,4 +152,5 @@ public class UpdatRRR implements StyleManager {
     public ObjectMapper getMapper() {
         return mapper;
     }
+
 }

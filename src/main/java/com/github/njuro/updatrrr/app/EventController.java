@@ -1,15 +1,18 @@
 package com.github.njuro.updatrrr.app;
 
 import com.github.njuro.updatrrr.Style;
-import com.github.njuro.updatrrr.UpdatRRR;
 import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
 import com.github.njuro.updatrrr.exceptions.StyleException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
@@ -19,8 +22,7 @@ import java.io.IOException;
  *
  * @author njuro
  */
-public class EventController {
-    private UpdatRRR manager;
+public class EventController extends BaseController {
 
     @FXML
     private GridPane gpInfo;
@@ -74,16 +76,6 @@ public class EventController {
         };
         cbStyleSelect.setCellFactory(factory);
         cbStyleSelect.setButtonCell(factory.call(null));
-        try {
-            manager = new UpdatRRR();
-        } catch (IOException ioe) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Properties file error");
-            alert.setHeaderText("Error loading properties");
-            alert.setContentText("Error loading properties file: " + ioe.getMessage());
-            setUpAlert(alert);
-            System.exit(1);
-        }
         if (!initializeStyles()) {
             return;
         }
@@ -223,7 +215,7 @@ public class EventController {
             refreshStyle();
         } catch (DatabaseFileException dbe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Database file error");
+            alert.setTitle("Error");
             alert.setHeaderText("Error loading database");
             alert.setContentText("Error loading file: " + dbe.getMessage());
             setUpAlert(alert);
@@ -234,7 +226,21 @@ public class EventController {
 
     @FXML
     private void btOpenSettings() {
-
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("view/settings.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Settings");
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+        } catch (IOException ioe) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error opening settings");
+            alert.setContentText("Settings could not be opened: " + ioe.getMessage());
+            setUpAlert(alert);
+        }
     }
 
     private void setUpAlert(Alert alert) {
