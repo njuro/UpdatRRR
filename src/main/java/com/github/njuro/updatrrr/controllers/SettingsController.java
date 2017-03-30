@@ -1,4 +1,4 @@
-package com.github.njuro.updatrrr.app;
+package com.github.njuro.updatrrr.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

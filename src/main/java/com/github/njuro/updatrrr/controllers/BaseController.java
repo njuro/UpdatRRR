@@ -1,9 +1,9 @@
-package com.github.njuro.updatrrr.app;
+package com.github.njuro.updatrrr.controllers;
 
 import com.github.njuro.updatrrr.UpdatRRR;
 
 /**
- * Base class for controllers
+ * Base class for com.github.njuro.updatrrr.controllers
  *
  * @author njuro
  */

@@ -1,6 +1,6 @@
-package com.github.njuro.updatrrr.app;
+package com.github.njuro.updatrrr;
 
-import com.github.njuro.updatrrr.UpdatRRR;
+import com.github.njuro.updatrrr.controllers.BaseController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,11 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
 
 /**
  * Frontend for the GUI of UpdatRRR
@@ -44,11 +41,11 @@ public class UpdatRRR_GUI extends Application {
             System.exit(1);
         }
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("view/layout.fxml"));
+        loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("views/layout.fxml"));
         Scene scene = new Scene(loader.load());
         stage.setScene(scene);
         stage.setTitle("UpdatRRR");
-        stage.getIcons().add(new Image(UpdatRRR_GUI.class.getClassLoader().getResourceAsStream("view/icon.png")));
+        stage.getIcons().add(new Image(UpdatRRR_GUI.class.getClassLoader().getResourceAsStream("views/icon.png")));
         stage.setOnCloseRequest(windowEvent -> {
             try {
                 manager.getSettings().store(new FileOutputStream(UpdatRRR.PROPERTIES_FILE), "UpdatRRR config file");

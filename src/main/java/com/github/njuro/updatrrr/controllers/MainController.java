@@ -1,6 +1,7 @@
-package com.github.njuro.updatrrr.app;
+package com.github.njuro.updatrrr.controllers;
 
 import com.github.njuro.updatrrr.Style;
+import com.github.njuro.updatrrr.UpdatRRR_GUI;
 import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
 import com.github.njuro.updatrrr.exceptions.StyleException;
 import javafx.collections.FXCollections;
@@ -231,7 +232,7 @@ public class MainController extends BaseController {
     private void btOpenSettings() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("view/settings.fxml"));
+            loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("views/settings.fxml"));
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Settings");
