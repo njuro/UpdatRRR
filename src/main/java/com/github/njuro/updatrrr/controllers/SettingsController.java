@@ -23,8 +23,8 @@ public class SettingsController extends BaseController {
 
     @FXML
     private void initialize() {
-        tfFileChooser.setText(manager.getDbFile().getAbsolutePath());
-        chosenFile = manager.getDbFile();
+        tfFileChooser.setText(manager.getDatabaseFile().getAbsolutePath());
+        chosenFile = manager.getDatabaseFile();
     }
 
     @FXML
@@ -51,7 +51,7 @@ public class SettingsController extends BaseController {
     @FXML
     private void btSaveSettings(ActionEvent event) {
         if (chosenFile != null) {
-            manager.setDbFile(chosenFile);
+            manager.setDatabaseFile(chosenFile);
         }
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }

@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class UpdatRRR implements StyleManager {
     private Properties settings = new Properties();
-    private File dbFile;
+    private File databaseFile;
     private List<Style> styles;
     private ObjectMapper mapper;
     public static final String PROPERTIES_FILE = "updatrrr.properties";
@@ -31,7 +31,7 @@ public class UpdatRRR implements StyleManager {
      */
     public UpdatRRR() throws IOException {
         settings.load(new FileInputStream("updatrrr.properties"));
-        dbFile = new File(settings.getProperty("dbpath"));
+        databaseFile = new File(settings.getProperty("dbpath"));
         mapper = new ObjectMapper();
         //configure mapper to load values based on field names and not getters/setters
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -52,7 +52,7 @@ public class UpdatRRR implements StyleManager {
     @Override
     public boolean loadStyles() throws DatabaseFileException {
         try {
-            JsonNode root = mapper.readTree(dbFile);
+            JsonNode root = mapper.readTree(databaseFile);
             styles = new ArrayList<>();
             //This exception rethrowing is a mess, but apparently there is no easy way to throw checked exceptions inside
             //lambda expressions. Thanks Oracle.
@@ -67,7 +67,7 @@ public class UpdatRRR implements StyleManager {
             styles.sort(Comparator.comparing(Style::getDate));
             return true;
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
-            throw new DatabaseFileException(e.getMessage(), dbFile);
+            throw new DatabaseFileException(e.getMessage(), databaseFile);
         }
     }
 
@@ -75,10 +75,10 @@ public class UpdatRRR implements StyleManager {
     public boolean saveStyles() throws DatabaseFileException {
         try {
             styles.sort(Comparator.comparing(Style::getDate).reversed());
-            getMapper().writeValue(dbFile, getStyles());
+            getMapper().writeValue(databaseFile, getStyles());
             return true;
         } catch (IOException ioe) {
-            throw new DatabaseFileException(ioe.getMessage(), dbFile);
+            throw new DatabaseFileException(ioe.getMessage(), databaseFile);
         }
     }
 
@@ -142,12 +142,12 @@ public class UpdatRRR implements StyleManager {
         return styles.remove(style);
     }
 
-    public File getDbFile() {
-        return dbFile;
+    public File getDatabaseFile() {
+        return databaseFile;
     }
 
-    public void setDbFile(File dbFile) {
-        this.dbFile = dbFile;
+    public void setDatabaseFile(File databaseFile) {
+        this.databaseFile = databaseFile;
     }
 
     public Properties getSettings() {

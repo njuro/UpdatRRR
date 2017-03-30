@@ -210,7 +210,7 @@ public class MainController extends BaseController {
     private boolean initializeStyles() {
         try {
             manager.loadStyles();
-            manager.getSettings().setProperty("dbpath", manager.getDbFile().getAbsolutePath());
+            manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
             lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
                     manager.getSettings().getProperty("dbpath"));
             refreshStyle();
