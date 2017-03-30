@@ -79,9 +79,6 @@ public class MainController extends BaseController {
         if (!initializeStyles()) {
             return;
         }
-        cbStyleSelect.setDisable(false);
-        lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
-                manager.getSettings().getProperty("dbpath"));
     }
 
     @FXML
@@ -212,6 +209,9 @@ public class MainController extends BaseController {
     private boolean initializeStyles() {
         try {
             manager.loadStyles();
+            manager.getSettings().setProperty("dbpath", manager.getDbFile().getAbsolutePath());
+            lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
+                    manager.getSettings().getProperty("dbpath"));
             refreshStyle();
         } catch (DatabaseFileException dbe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -219,7 +219,10 @@ public class MainController extends BaseController {
             alert.setHeaderText("Error loading database");
             alert.setContentText("Error loading file: " + dbe.getMessage());
             setUpAlert(alert);
+            btOpenSettings();
             return false;
+        } finally {
+            cbStyleSelect.setDisable(false);
         }
         return true;
     }
@@ -233,7 +236,8 @@ public class MainController extends BaseController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Settings");
             stage.setScene(new Scene(loader.load()));
-            stage.show();
+            stage.showAndWait();
+            initializeStyles();
         } catch (IOException ioe) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

@@ -24,6 +24,7 @@ public class UpdatRRR implements StyleManager {
     private File dbFile;
     private List<Style> styles;
     private ObjectMapper mapper;
+    public static final String PROPERTIES_FILE = "updatrrr.properties";
 
     /**
      * @throws IOException when properties file is missing, or corrupted
@@ -139,6 +140,14 @@ public class UpdatRRR implements StyleManager {
             return false;
         }
         return styles.remove(style);
+    }
+
+    public File getDbFile() {
+        return dbFile;
+    }
+
+    public void setDbFile(File dbFile) {
+        this.dbFile = dbFile;
     }
 
     public Properties getSettings() {

@@ -9,7 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
 /**
  * Frontend for the GUI of UpdatRRR
@@ -21,9 +25,10 @@ public class UpdatRRR_GUI extends Application {
         Application.launch(args);
     }
 
+    private UpdatRRR manager;
+
     @Override
     public void start(Stage stage) throws Exception {
-        UpdatRRR manager;
         try {
             manager = new UpdatRRR();
             BaseController.initManager(manager);
@@ -44,6 +49,21 @@ public class UpdatRRR_GUI extends Application {
         stage.setScene(scene);
         stage.setTitle("UpdatRRR");
         stage.getIcons().add(new Image(UpdatRRR_GUI.class.getClassLoader().getResourceAsStream("view/icon.png")));
+        stage.setOnCloseRequest(windowEvent -> {
+            try {
+                manager.getSettings().store(new FileOutputStream(UpdatRRR.PROPERTIES_FILE), "UpdatRRR config file");
+            } catch (IOException ioe) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Properties file error");
+                alert.setHeaderText("Error saving properties");
+                alert.setContentText("Error loading properties file: " + ioe.getMessage());
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                alert.initOwner(alert.getOwner());
+                alert.showAndWait();
+                System.exit(1);
+            }
+        });
         stage.show();
     }
 }
