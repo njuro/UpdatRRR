@@ -22,7 +22,7 @@ import java.io.IOException;
  *
  * @author njuro
  */
-public class EventController extends BaseController {
+public class MainController extends BaseController {
 
     @FXML
     private GridPane gpInfo;
