@@ -17,6 +17,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Optional;
 
 /**
@@ -77,13 +78,14 @@ public class MainController extends BaseController {
             manager.loadStyles();
             lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
                     manager.getDatabaseFile().getAbsolutePath());
+            manager.getStyles().sort(Comparator.comparing(Style::getDate).reversed());
             cbStyleSelect.getItems().setAll(manager.getStyles());
         } catch (DatabaseFileException dbe) {
-            System.out.println(dbe.getMessage());
-            if (manager.getDatabaseFile() == null && manager.getSettings().getProperty("dbpath").equals("")) {
+            if (manager.getDatabaseFile() == null || manager.getSettings().getProperty("dbpath").equals("")) {
                 Alert welcome = new AlertBuilder(Alert.AlertType.INFORMATION).title("Welcome to UpdatRRR")
                         .header("Welcome!")
                         .content("Please specify the path to your StylRRR database file").createAlert();
+                welcome.getDialogPane().setMinWidth(600);
                 welcome.getButtonTypes().setAll(ButtonType.NEXT, ButtonType.CLOSE);
                 Optional<ButtonType> response = welcome.showAndWait();
                 response.ifPresent(buttonType -> {
@@ -140,6 +142,7 @@ public class MainController extends BaseController {
         }
         new AlertBuilder(Alert.AlertType.INFORMATION).title("Saved successfully").content("Database successfully saved")
                 .createAlert().showAndWait();
+        manager.getStyles().sort(Comparator.comparing(Style::getDate).reversed());
         cbStyleSelect.getItems().setAll(manager.getStyles());
     }
 

@@ -46,6 +46,8 @@ public class UpdatRRR_GUI extends Application {
             } catch (IOException ioe) {
                 new AlertBuilder(Alert.AlertType.ERROR).title("Properties file error").header("Error saving properties")
                         .content("Error loading properties file: " + ioe.getMessage()).createAlert().showAndWait();
+
+            } finally {
                 System.exit(1);
             }
         });

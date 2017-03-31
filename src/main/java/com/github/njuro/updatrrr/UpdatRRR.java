@@ -39,6 +39,7 @@ public class UpdatRRR implements StyleManager {
      */
     public UpdatRRR() throws IOException {
         settings.load(new FileInputStream("updatrrr.properties"));
+        databaseFile = new File(settings.getProperty("dbpath"));
         mapper = new ObjectMapper();
         //configure mapper to load values based on field names and not getters/setters
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
