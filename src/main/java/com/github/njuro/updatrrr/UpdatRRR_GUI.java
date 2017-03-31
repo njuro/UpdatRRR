@@ -41,6 +41,7 @@ public class UpdatRRR_GUI extends Application {
         stage.getIcons().add(new Image(UpdatRRR_GUI.class.getClassLoader().getResourceAsStream("views/icon.png")));
         stage.setOnCloseRequest(windowEvent -> {
             try {
+                manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
                 manager.getSettings().store(new FileOutputStream(UpdatRRR.PROPERTIES_FILE), "UpdatRRR config file");
             } catch (IOException ioe) {
                 new AlertBuilder(Alert.AlertType.ERROR).title("Properties file error").header("Error saving properties")

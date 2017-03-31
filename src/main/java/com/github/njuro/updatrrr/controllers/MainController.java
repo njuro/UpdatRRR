@@ -15,7 +15,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * JavaFX event controller for GUI of UpdatRRR
@@ -54,6 +56,8 @@ public class MainController extends BaseController {
     @FXML
     private Label lbStatusRight;
 
+    private File previousDatabaseFile;
+
     @FXML
     public void initialize() {
         Callback<ListView<Style>, ListCell<Style>> factory = lv -> new ListCell<Style>() {
@@ -71,14 +75,30 @@ public class MainController extends BaseController {
     private void initializeStyles() {
         try {
             manager.loadStyles();
-            manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
             lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
-                    manager.getSettings().getProperty("dbpath"));
+                    manager.getDatabaseFile().getAbsolutePath());
             cbStyleSelect.getItems().setAll(manager.getStyles());
         } catch (DatabaseFileException dbe) {
-            new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error loading database")
-                    .content("Error loading file: " + dbe.getMessage())
-                    .createAlert().showAndWait();
+            System.out.println(dbe.getMessage());
+            if (manager.getDatabaseFile() == null && manager.getSettings().getProperty("dbpath").equals("")) {
+                Alert welcome = new AlertBuilder(Alert.AlertType.INFORMATION).title("Welcome to UpdatRRR")
+                        .header("Welcome!")
+                        .content("Please specify the path to your StylRRR database file").createAlert();
+                welcome.getButtonTypes().setAll(ButtonType.NEXT, ButtonType.CLOSE);
+                Optional<ButtonType> response = welcome.showAndWait();
+                response.ifPresent(buttonType -> {
+                    if (buttonType.getButtonData().isCancelButton()) {
+                        System.exit(0);
+                    }
+                });
+            } else {
+                new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error loading database")
+                        .content("Error loading file: " + dbe.getMessage())
+                        .createAlert().showAndWait();
+            }
+            if (previousDatabaseFile != null) {
+                manager.setDatabaseFile(previousDatabaseFile);
+            }
             btOpenSettings();
         } finally {
             cbStyleSelect.setDisable(false);
@@ -202,6 +222,7 @@ public class MainController extends BaseController {
     @FXML
     private void btOpenSettings() {
         try {
+            previousDatabaseFile = manager.getDatabaseFile();
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("views/settings.fxml"));
             Stage stage = new Stage();
