@@ -8,9 +8,17 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Manager for updating and editing userstyles for StylRRR addon
@@ -20,11 +28,11 @@ import java.util.*;
  * @author njuro
  */
 public class UpdatRRR implements StyleManager {
+    public static final String PROPERTIES_FILE = "updatrrr.properties";
     private Properties settings = new Properties();
     private File databaseFile;
     private List<Style> styles;
     private ObjectMapper mapper;
-    public static final String PROPERTIES_FILE = "updatrrr.properties";
 
     /**
      * @throws IOException when properties file is missing, or corrupted

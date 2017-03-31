@@ -22,7 +22,7 @@ public class SettingsController extends BaseController {
 
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         tfFileChooser.setText(manager.getDatabaseFile().getAbsolutePath());
         chosenFile = manager.getDatabaseFile();
     }

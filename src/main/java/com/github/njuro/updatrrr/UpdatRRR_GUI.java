@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.FileOutputStream;
@@ -18,11 +17,11 @@ import java.io.IOException;
  * @author njuro
  */
 public class UpdatRRR_GUI extends Application {
+    private UpdatRRR manager;
+
     public static void main(String[] args) {
         Application.launch(args);
     }
-
-    private UpdatRRR manager;
 
     @Override
     public void start(Stage stage) throws Exception {
