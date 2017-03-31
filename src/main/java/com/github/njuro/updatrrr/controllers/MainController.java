@@ -8,15 +8,7 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
@@ -69,20 +61,42 @@ public class MainController extends BaseController {
             protected void updateItem(Style item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? "Unnamed style" : item.getName());
-                if (!empty) {
-                    lbStatusRight.setText(item.getName());
-                    tfName.setText(item.getName());
-                    tfAuthor.setText(item.getAuthor());
-                    tfUrl.setText(item.getUrl());
-                    tfDate.setText(item.getDateString());
-                    chbEnabled.setSelected(item.isEnabled());
-                    taCode.setText(item.getCode());
-                }
             }
         };
         cbStyleSelect.setCellFactory(factory);
         cbStyleSelect.setButtonCell(factory.call(null));
         initializeStyles();
+    }
+
+    private void initializeStyles() {
+        try {
+            manager.loadStyles();
+            manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
+            lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
+                    manager.getSettings().getProperty("dbpath"));
+            cbStyleSelect.getItems().setAll(manager.getStyles());
+        } catch (DatabaseFileException dbe) {
+            new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error loading database")
+                    .content("Error loading file: " + dbe.getMessage())
+                    .createAlert().showAndWait();
+            btOpenSettings();
+        } finally {
+            cbStyleSelect.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void refreshStyle() {
+        Style selectedStyle = cbStyleSelect.getSelectionModel().getSelectedItem();
+        if (selectedStyle != null) {
+            lbStatusRight.setText(selectedStyle.getName());
+            tfName.setText(selectedStyle.getName());
+            tfAuthor.setText(selectedStyle.getAuthor());
+            tfUrl.setText(selectedStyle.getUrl());
+            tfDate.setText(selectedStyle.getDateString());
+            chbEnabled.setSelected(selectedStyle.isEnabled());
+            taCode.setText(selectedStyle.getCode());
+        }
     }
 
     @FXML
@@ -97,6 +111,7 @@ public class MainController extends BaseController {
         }
         try {
             manager.saveStyles();
+            refreshStyle();
         } catch (DatabaseFileException dbe) {
             new AlertBuilder(Alert.AlertType.ERROR).title("Saving failed").header("Error saving database")
                     .content("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": "
@@ -118,6 +133,7 @@ public class MainController extends BaseController {
         try {
             btUpdate.setDisable(true);
             result = manager.updateStyle(selectedStyle);
+            refreshStyle();
         } catch (StyleException se) {
             new AlertBuilder(Alert.AlertType.ERROR).title("Update failed").header("Update failed")
                     .content("Getting update for " + se.getStyle().getName() + " failed: " + se.getMessage())
@@ -181,23 +197,6 @@ public class MainController extends BaseController {
         alert.getDialogPane().setContent(expContent);
         alert.showAndWait();
         btSaveStyles();
-    }
-
-    private void initializeStyles() {
-        try {
-            manager.loadStyles();
-            manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
-            lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
-                    manager.getSettings().getProperty("dbpath"));
-            cbStyleSelect.getItems().setAll(manager.getStyles());
-        } catch (DatabaseFileException dbe) {
-            new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error loading database")
-                    .content("Error loading file: " + dbe.getMessage())
-                    .createAlert().showAndWait();
-            btOpenSettings();
-        } finally {
-            cbStyleSelect.setDisable(false);
-        }
     }
 
     @FXML
