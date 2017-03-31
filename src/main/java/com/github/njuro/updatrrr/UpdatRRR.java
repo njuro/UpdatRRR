@@ -75,7 +75,6 @@ public class UpdatRRR implements StyleManager {
                     throw new IllegalArgumentException("Failed to read data, possible corruption");
                 }
             });
-            styles.sort(Comparator.comparing(Style::getDate));
             return true;
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new DatabaseFileException(e.getMessage(), databaseFile);
@@ -85,7 +84,6 @@ public class UpdatRRR implements StyleManager {
     @Override
     public boolean saveStyles() throws DatabaseFileException {
         try {
-            styles.sort(Comparator.comparing(Style::getDate).reversed());
             getMapper().writeValue(databaseFile, getStyles());
             return true;
         } catch (IOException ioe) {
