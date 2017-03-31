@@ -1,17 +1,24 @@
 package com.github.njuro.updatrrr.controllers;
 
+import com.github.njuro.updatrrr.AlertBuilder;
 import com.github.njuro.updatrrr.Style;
 import com.github.njuro.updatrrr.UpdatRRR_GUI;
 import com.github.njuro.updatrrr.exceptions.DatabaseFileException;
 import com.github.njuro.updatrrr.exceptions.StyleException;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -26,19 +33,10 @@ import java.io.IOException;
 public class MainController extends BaseController {
 
     @FXML
-    private GridPane gpInfo;
-
-    @FXML
-    private ComboBox cbStyleSelect;
-
-    @FXML
-    private Button btSave;
+    private ComboBox<Style> cbStyleSelect;
 
     @FXML
     private Button btUpdate;
-
-    @FXML
-    private Button btUpdateAll;
 
     @FXML
     private TextField tfName;
@@ -64,8 +62,6 @@ public class MainController extends BaseController {
     @FXML
     private Label lbStatusRight;
 
-    private Style selectedStyle;
-
     @FXML
     public void initialize() {
         Callback<ListView<Style>, ListCell<Style>> factory = lv -> new ListCell<Style>() {
@@ -73,33 +69,25 @@ public class MainController extends BaseController {
             protected void updateItem(Style item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? "Unnamed style" : item.getName());
+                if (!empty) {
+                    lbStatusRight.setText(item.getName());
+                    tfName.setText(item.getName());
+                    tfAuthor.setText(item.getAuthor());
+                    tfUrl.setText(item.getUrl());
+                    tfDate.setText(item.getDateString());
+                    chbEnabled.setSelected(item.isEnabled());
+                    taCode.setText(item.getCode());
+                }
             }
         };
         cbStyleSelect.setCellFactory(factory);
         cbStyleSelect.setButtonCell(factory.call(null));
-        if (!initializeStyles()) {
-            return;
-        }
-    }
-
-    @FXML
-    private void refreshStyle() {
-        cbStyleSelect.setItems(FXCollections.observableList(manager.getStyles()));
-        selectedStyle = (Style) cbStyleSelect.getSelectionModel().getSelectedItem();
-        if (selectedStyle == null) {
-            return;
-        }
-        lbStatusRight.setText(selectedStyle.getName());
-        tfName.setText(selectedStyle.getName());
-        tfAuthor.setText(selectedStyle.getAuthor());
-        tfUrl.setText(selectedStyle.getUrl());
-        tfDate.setText(selectedStyle.getDateString());
-        chbEnabled.setSelected(selectedStyle.isEnabled());
-        taCode.setText(selectedStyle.getCode());
+        initializeStyles();
     }
 
     @FXML
     private void btSaveStyles() {
+        Style selectedStyle = cbStyleSelect.getSelectionModel().getSelectedItem();
         if (selectedStyle != null) {
             selectedStyle.setName(tfName.getText().trim());
             selectedStyle.setAuthor(tfAuthor.getText().trim());
@@ -107,29 +95,22 @@ public class MainController extends BaseController {
             selectedStyle.setEnabled(chbEnabled.isSelected());
             selectedStyle.setCode(taCode.getText());
         }
-        btSave.setDisable(true);
         try {
             manager.saveStyles();
         } catch (DatabaseFileException dbe) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Saving failed");
-            alert.setHeaderText("Error saving database");
-            alert.setContentText("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": " + dbe.getMessage());
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.ERROR).title("Saving failed").header("Error saving database")
+                    .content("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": "
+                            + dbe.getMessage()).createAlert().showAndWait();
             return;
-        } finally {
-            btSave.setDisable(false);
         }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Saved successfully");
-        alert.setHeaderText("");
-        alert.setContentText("Database successfully saved");
-        setUpAlert(alert);
-        refreshStyle();
+        new AlertBuilder(Alert.AlertType.INFORMATION).title("Saved successfully").content("Database successfully saved")
+                .createAlert().showAndWait();
+        cbStyleSelect.getItems().setAll(manager.getStyles());
     }
 
     @FXML
     private void btUpdateStyle() {
+        Style selectedStyle = cbStyleSelect.getSelectionModel().getSelectedItem();
         if (selectedStyle == null) {
             return;
         }
@@ -138,29 +119,25 @@ public class MainController extends BaseController {
             btUpdate.setDisable(true);
             result = manager.updateStyle(selectedStyle);
         } catch (StyleException se) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Update failed");
-            alert.setHeaderText("Update failed");
-            alert.setContentText("Getting update for " + se.getStyle().getName() + " failed: " + se.getMessage());
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.ERROR).title("Update failed").header("Update failed")
+                    .content("Getting update for " + se.getStyle().getName() + " failed: " + se.getMessage())
+                    .createAlert().showAndWait();
             return;
         } finally {
             btUpdate.setDisable(false);
         }
         if (result != null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Updated successfully");
-            alert.setHeaderText(selectedStyle.getName() + " updated!");
-            alert.setContentText("Style " + selectedStyle.getName() + " was updated from version " + result +
-                    " to version  " + selectedStyle.getDateString());
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.INFORMATION).title("Updated successfully")
+                    .header(selectedStyle.getName() + " updated!")
+                    .content("Style " + selectedStyle.getName() + " was updated from version " + result +
+                            " to version  " + selectedStyle.getDateString())
+                    .createAlert().showAndWait();
             btSaveStyles();
         } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Update not found");
-            alert.setHeaderText("Update not found");
-            alert.setContentText(selectedStyle.getName() + " is already the most recent version (" + selectedStyle.getDateString() + ")");
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.INFORMATION).title("Update not found").header("Update not found")
+                    .content(selectedStyle.getName() + " is already the most recent version ("
+                            + selectedStyle.getDateString() + ")")
+                    .createAlert().showAndWait();
         }
     }
 
@@ -169,31 +146,30 @@ public class MainController extends BaseController {
         int updated = 0;
         int notUpdated = 0;
         int failed = 0;
-        String messages = "";
+        StringBuilder messages = new StringBuilder();
         for (Style style : manager.getStyles()) {
             try {
-                messages += "- " + style.getName() + ": ";
+                messages.append("- ").append(style.getName()).append(": ");
                 String result = manager.updateStyle(style);
                 if (result == null) {
-                    messages += "Already the most recent version";
+                    messages.append("Already the most recent version");
                     notUpdated++;
                 } else {
-                    messages += "Updated from version " + result + " to " + style.getDateString();
+                    messages.append("Updated from version ").append(result).append(" to ").append(style.getDateString());
                     updated++;
                 }
             } catch (StyleException se) {
-                messages += "Getting update failed: " + se.getMessage();
+                messages.append("Getting update failed: ").append(se.getMessage());
                 failed++;
             } finally {
-                messages += "\n";
+                messages.append("\n");
             }
         }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Update completed");
-        alert.setHeaderText("All updated completes");
+        Alert alert = new AlertBuilder(Alert.AlertType.INFORMATION).title("Update completed")
+                .header("All updated completes").createAlert();
         Label label = new Label(String.format("Styles: %d | Updated: %d | Not updated: %d | Failed: %d",
                 manager.getStyles().size(), updated, notUpdated, failed));
-        TextArea results = new TextArea(messages);
+        TextArea results = new TextArea(messages.toString());
         results.setEditable(false);
         GridPane.setVgrow(results, Priority.ALWAYS);
         GridPane.setHgrow(results, Priority.ALWAYS);
@@ -203,29 +179,25 @@ public class MainController extends BaseController {
         expContent.add(label, 0, 0);
         expContent.add(results, 0, 1);
         alert.getDialogPane().setContent(expContent);
-        setUpAlert(alert);
+        alert.showAndWait();
         btSaveStyles();
     }
 
-    private boolean initializeStyles() {
+    private void initializeStyles() {
         try {
             manager.loadStyles();
             manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
             lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
                     manager.getSettings().getProperty("dbpath"));
-            refreshStyle();
+            cbStyleSelect.getItems().setAll(manager.getStyles());
         } catch (DatabaseFileException dbe) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error loading database");
-            alert.setContentText("Error loading file: " + dbe.getMessage());
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error loading database")
+                    .content("Error loading file: " + dbe.getMessage())
+                    .createAlert().showAndWait();
             btOpenSettings();
-            return false;
         } finally {
             cbStyleSelect.setDisable(false);
         }
-        return true;
     }
 
     @FXML
@@ -240,22 +212,9 @@ public class MainController extends BaseController {
             stage.showAndWait();
             initializeStyles();
         } catch (IOException ioe) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error opening settings");
-            alert.setContentText("Settings could not be opened: " + ioe.getMessage());
-            setUpAlert(alert);
+            new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error opening settings")
+                    .content("Settings could not be opened: " + ioe.getMessage())
+                    .createAlert().showAndWait();
         }
     }
-
-    private void setUpAlert(Alert alert) {
-        if (alert == null) {
-            return;
-        }
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.initOwner(alert.getOwner());
-        alert.showAndWait();
-    }
-
 }

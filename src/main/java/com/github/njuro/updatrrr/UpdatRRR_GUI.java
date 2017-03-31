@@ -30,14 +30,8 @@ public class UpdatRRR_GUI extends Application {
             manager = new UpdatRRR();
             BaseController.initManager(manager);
         } catch (IOException ioe) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Properties file error");
-            alert.setHeaderText("Error loading properties");
-            alert.setContentText("Error loading properties file: " + ioe.getMessage());
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.initOwner(alert.getOwner());
-            alert.showAndWait();
+            new AlertBuilder(Alert.AlertType.ERROR).title("Properties file error").header("Error loading properties")
+                    .content("Error loading properties file: " + ioe.getMessage()).createAlert().showAndWait();
             System.exit(1);
         }
         FXMLLoader loader = new FXMLLoader();
@@ -50,14 +44,8 @@ public class UpdatRRR_GUI extends Application {
             try {
                 manager.getSettings().store(new FileOutputStream(UpdatRRR.PROPERTIES_FILE), "UpdatRRR config file");
             } catch (IOException ioe) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Properties file error");
-                alert.setHeaderText("Error saving properties");
-                alert.setContentText("Error loading properties file: " + ioe.getMessage());
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-                alert.initOwner(alert.getOwner());
-                alert.showAndWait();
+                new AlertBuilder(Alert.AlertType.ERROR).title("Properties file error").header("Error saving properties")
+                        .content("Error loading properties file: " + ioe.getMessage()).createAlert().showAndWait();
                 System.exit(1);
             }
         });
