@@ -3,6 +3,7 @@ package com.github.njuro.updatrrr;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * Builder for custom Alerts
@@ -50,6 +51,8 @@ public class AlertBuilder {
 
     public Alert createAlert() {
         Alert alert = new Alert(type);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(UpdatRRR_GUI.ICON);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);

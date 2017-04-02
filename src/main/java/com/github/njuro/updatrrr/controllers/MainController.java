@@ -232,6 +232,7 @@ public class MainController extends BaseController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Settings");
             stage.setScene(new Scene(loader.load()));
+            stage.getIcons().add(UpdatRRR_GUI.ICON);
             stage.showAndWait();
             initializeStyles();
         } catch (IOException ioe) {

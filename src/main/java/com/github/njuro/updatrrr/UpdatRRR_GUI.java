@@ -17,6 +17,8 @@ import java.io.IOException;
  * @author njuro
  */
 public class UpdatRRR_GUI extends Application {
+    public static final Image ICON = new Image(UpdatRRR_GUI.class.getClassLoader()
+            .getResourceAsStream("views/icon.png"));
     private UpdatRRR manager;
 
     public static void main(String[] args) {
@@ -38,7 +40,7 @@ public class UpdatRRR_GUI extends Application {
         Scene scene = new Scene(loader.load());
         stage.setScene(scene);
         stage.setTitle("UpdatRRR");
-        stage.getIcons().add(new Image(UpdatRRR_GUI.class.getClassLoader().getResourceAsStream("views/icon.png")));
+        stage.getIcons().add(ICON);
         stage.setOnCloseRequest(windowEvent -> {
             try {
                 manager.getSettings().setProperty("dbpath", manager.getDatabaseFile().getAbsolutePath());
