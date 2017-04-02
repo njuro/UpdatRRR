@@ -79,7 +79,11 @@ public class MainController extends BaseController {
             lbStatusLeft.setText("Successfully loaded " + manager.getStyles().size() + " styles from " +
                     manager.getDatabaseFile().getAbsolutePath());
             manager.getStyles().sort(Comparator.comparing(Style::getDate).reversed());
+            //workaround for proper refresh of styles in combo box
+            int index = cbStyleSelect.getSelectionModel().getSelectedIndex();
+            cbStyleSelect.getItems().clear();
             cbStyleSelect.getItems().setAll(manager.getStyles());
+            cbStyleSelect.getSelectionModel().select(index);
         } catch (DatabaseFileException dbe) {
             if (manager.getDatabaseFile() == null || manager.getSettings().getProperty("dbpath").equals("")) {
                 Alert welcome = new AlertBuilder(Alert.AlertType.INFORMATION).title("Welcome to UpdatRRR")
