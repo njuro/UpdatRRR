@@ -52,5 +52,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.0.pr1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx -->
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.7-M4</version>
+        </dependency>
     </dependencies>
 </project>
