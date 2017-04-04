@@ -69,9 +69,9 @@ public class MainController extends BaseController {
             protected void updateItem(Style item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? "Unnamed style" : item.getName());
+                selectedStyle = item;
             }
         };
-        cbStyles.getSelectionModel().selectedItemProperty().addListener((ov, oldS, newS) -> selectedStyle = newS);
         cbStyles.setCellFactory(factory);
         cbStyles.setButtonCell(factory.call(null));
         initializeStyles();
