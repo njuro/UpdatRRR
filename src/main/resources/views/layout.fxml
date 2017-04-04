@@ -22,14 +22,14 @@
   <children>
       <HBox prefHeight="26.0" prefWidth="900.0" spacing="10.0">
          <children>
-            <ComboBox fx:id="cbStyleSelect" disable="true" onAction="#refreshStyle" prefHeight="26.0" prefWidth="390.0" promptText="-- select style --">
+            <ComboBox fx:id="cbStyles" disable="true" onAction="#refreshStyle" prefHeight="26.0" prefWidth="390.0" promptText="-- select style --">
                <HBox.margin>
                   <Insets />
                </HBox.margin></ComboBox>
-            <Button fx:id="btSave" mnemonicParsing="false" onAction="#btSaveStyles" text="Save" />
-            <Button fx:id="btUpdate" mnemonicParsing="false" onAction="#btUpdateStyle" text="Update" />
-            <Button fx:id="btUpdateAll" mnemonicParsing="false" onAction="#btUpdateAllStyles" text="Update all" />
-            <Button fx:id="btSettings" mnemonicParsing="false" onAction="#btOpenSettings" text="Settings" />
+            <Button fx:id="btSave" mnemonicParsing="false" onAction="#saveStyles" text="Save" />
+            <Button fx:id="btUpdate" mnemonicParsing="false" onAction="#updateStyle" text="Update" />
+            <Button fx:id="btUpdateAll" mnemonicParsing="false" onAction="#updateAllStyles" text="Update all" />
+            <Button fx:id="btSettings" mnemonicParsing="false" onAction="#openSettings" text="Settings" />
          </children>
          <padding>
             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
