@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -26,6 +27,9 @@ import java.util.Optional;
  * @author njuro
  */
 public class MainController extends BaseController {
+
+    @FXML
+    private VBox vbMain;
 
     @FXML
     private ComboBox<Style> cbStyleSelect;
@@ -235,9 +239,12 @@ public class MainController extends BaseController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Settings");
-            stage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+            loadTheme(scene);
+            stage.setScene(scene);
             stage.getIcons().add(UpdatRRR_GUI.ICON);
             stage.showAndWait();
+            loadTheme(vbMain.getScene());
             initializeStyles();
         } catch (IOException ioe) {
             new AlertBuilder(Alert.AlertType.ERROR).title("Error").header("Error opening settings")

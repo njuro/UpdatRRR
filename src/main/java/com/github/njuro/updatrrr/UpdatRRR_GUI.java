@@ -30,6 +30,7 @@ public class UpdatRRR_GUI extends Application {
         try {
             manager = new UpdatRRR();
             BaseController.initManager(manager);
+            BaseController.setTheme(manager.getSettings().getProperty("theme"));
         } catch (IOException ioe) {
             new AlertBuilder(Alert.AlertType.ERROR).title("Properties file error").header("Error loading properties")
                     .content("Error loading properties file: " + ioe.getMessage()).createAlert().showAndWait();
@@ -38,6 +39,7 @@ public class UpdatRRR_GUI extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(UpdatRRR_GUI.class.getClassLoader().getResource("views/layout.fxml"));
         Scene scene = new Scene(loader.load());
+        BaseController.loadTheme(scene);
         stage.setScene(scene);
         stage.setTitle("UpdatRRR");
         stage.getIcons().add(ICON);
