@@ -8,22 +8,17 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 /**
  * Manager for updating and editing userstyles for StylRRR addon
- * <p>
  * (https://addons.mozilla.org/en-Us/firefox/addon/stylrrr/)
+ * Database file usually found in ${FIREFOX_PROFILE_PATH}/stylRRR/stylRRR_DB.json
  *
  * @author njuro
  */
@@ -57,16 +52,26 @@ public class UpdatRRR implements StyleManager {
         manager.saveStyles();
     }
 
+    /**
+     * Gets file from resources folder
+     *
+     * @param path to resource
+     * @return URL URL of resource file (can be null, if file is not found)
+     */
+    public static URL getResource(String path) {
+        return UpdatRRR.class.getClassLoader().getResource(path);
+    }
+
     @Override
-    public boolean loadStyles() throws DatabaseFileException {
+    public void loadStyles() throws DatabaseFileException {
         if (databaseFile == null) {
             databaseFile = (settings.getProperty("dbpath").isEmpty()) ? null : new File(settings.getProperty("dbpath"));
         }
         try {
             JsonNode root = mapper.readTree(databaseFile);
             styles = new ArrayList<>();
-            //This exception rethrowing is a mess, but apparently there is no easy way to throw checked exceptions inside
-            //lambda expressions. Thanks Oracle.
+            //This exception rethrowing is a mess, but there is no easy way to throw checked exceptions inside
+            //lambda expressions.
             root.forEach(node -> {
                 try {
                     Style style = mapper.readValue(node.traverse(), Style.class);
@@ -75,29 +80,18 @@ public class UpdatRRR implements StyleManager {
                     throw new IllegalArgumentException("Failed to read data, possible corruption");
                 }
             });
-            return true;
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new DatabaseFileException(e.getMessage(), databaseFile);
         }
     }
 
     @Override
-    public boolean saveStyles() throws DatabaseFileException {
+    public void saveStyles() throws DatabaseFileException {
         try {
             getMapper().writeValue(databaseFile, getStyles());
-            return true;
         } catch (IOException ioe) {
             throw new DatabaseFileException(ioe.getMessage(), databaseFile);
         }
-    }
-
-    @Override
-    public boolean addStyle(Style style) {
-        if (styles != null) {
-            style.setDate(Style.parseDateToString(new Date()));
-            styles.add(style);
-        }
-        return false;
     }
 
     @Override
@@ -144,11 +138,19 @@ public class UpdatRRR implements StyleManager {
     }
 
     @Override
-    public boolean removeStyle(Style style) {
-        if (style == null) {
-            return false;
+    public void addStyle(Style style) {
+        if (styles != null) {
+            style.setDate(Style.parseDateToString(new Date()));
+            styles.add(style);
         }
-        return styles.remove(style);
+    }
+
+    @Override
+    public void removeStyle(Style style) {
+        if (style == null) {
+            return;
+        }
+        styles.remove(style);
     }
 
     public File getDatabaseFile() {

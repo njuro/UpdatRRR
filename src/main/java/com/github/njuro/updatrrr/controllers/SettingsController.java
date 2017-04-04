@@ -13,30 +13,37 @@ import javafx.stage.FileChooser;
 import java.io.File;
 
 /**
- * Controller for settings dialog
+ * Event controller for settings dialog of UpdatRRR GUI
+ *
+ * @author njuro
  */
 public class SettingsController extends BaseController {
+
     @FXML
     private VBox vbMain;
+
     @FXML
     private Button btBrowse;
+
     @FXML
-    private TextField tfFileChooser;
+    private TextField tfDatabaseFile;
+
     @FXML
-    private ComboBox<Theme> cbThemeChooser;
+    private ComboBox<Theme> cbThemes;
+
     private File chosenFile;
     private Theme chosenTheme;
 
     @FXML
     public void initialize() {
-        tfFileChooser.setText(manager.getDatabaseFile().getAbsolutePath());
+        tfDatabaseFile.setText(manager.getDatabaseFile().getAbsolutePath());
         chosenFile = manager.getDatabaseFile();
-        cbThemeChooser.getItems().addAll(Theme.values());
-        cbThemeChooser.getSelectionModel().selectedItemProperty().addListener((observableValue, theme, t1) -> {
-            chosenTheme = t1;
-            loadTheme(chosenTheme, cbThemeChooser.getScene());
+        cbThemes.getItems().addAll(Theme.values());
+        cbThemes.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTheme, newTheme) -> {
+            chosenTheme = newTheme;
+            loadTheme(chosenTheme, cbThemes.getScene());
         });
-        cbThemeChooser.getSelectionModel().select(theme);
+        cbThemes.getSelectionModel().select(theme);
     }
 
     @FXML
@@ -51,17 +58,17 @@ public class SettingsController extends BaseController {
         );
         chosenFile = fileChooser.showOpenDialog(btBrowse.getScene().getWindow());
         if (chosenFile != null) {
-            tfFileChooser.setText(chosenFile.getAbsolutePath());
+            tfDatabaseFile.setText(chosenFile.getAbsolutePath());
         }
     }
 
     @FXML
-    private void btCloseSettings(ActionEvent event) {
+    private void closeSettings(ActionEvent event) {
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML
-    private void btSaveSettings(ActionEvent event) {
+    private void saveSettings(ActionEvent event) {
         if (chosenFile != null) {
             manager.setDatabaseFile(chosenFile);
         }

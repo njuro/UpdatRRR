@@ -6,52 +6,58 @@ import com.github.njuro.updatrrr.exceptions.StyleException;
 import java.util.List;
 
 /**
- * Styles manager interface
+ * Styles manager interface for loading, updating and saving styles
  *
  * @author njuro
  */
 public interface StyleManager {
 
     /**
-     * Loads userstyles from StylRRR database file. Usually found in {FIREFOX_PROFILE_PATH}/stylRRR/stylRRR_DB.json
+     * Loads userstyles from database file.
      *
-     * @return true if styles were successfully loaded, false if something happened
+     * @throws DatabaseFileException if loading from file failed
      */
-    boolean loadStyles() throws DatabaseFileException;
+    void loadStyles() throws DatabaseFileException;
 
     /**
      * Saves edited, updated styles back into database file
      *
-     * @return true if styles were successfully loaded, false if something happened
+     * @throws DatabaseFileException if saving to file failed
      */
-    boolean saveStyles() throws DatabaseFileException;
+    void saveStyles() throws DatabaseFileException;
 
-    /**
-     * Adds new style to database
-     *
-     * @param style style to be added
-     */
-    boolean addStyle(Style style);
 
     /**
      * Finds if more recent version of style is available on userstyles.org and replaces the code
      *
-     * @return date associated with style before update, "-" if update failed
+     * @return date associated with style before update, empty string if update failed
+     * @throws StyleException when URL associated with style is invalid
      */
     String updateStyle(Style style) throws StyleException;
 
     /**
      * Updates all styles
      *
-     * @return List of exceptions throwed during updates;
+     * @return List of exceptions thrown during update
      */
     List<StyleException> updateAllStyles();
 
     /**
-     * Removes style from database
-     * <p>
-     * -- NOT IMPLEMENTED YET --
+     * Adds new style to database
+     *
+     * @param style style to add
+     *              <p>
+     *              TODO: Implement integrity check
      */
-    boolean removeStyle(Style style);
+    void addStyle(Style style);
+
+    /**
+     * Removes style from database
+     *
+     * @param style style to remove
+     *              <p>
+     *              TODO: Implement integrity check
+     */
+    void removeStyle(Style style);
 
 }
