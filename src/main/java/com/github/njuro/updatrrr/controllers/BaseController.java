@@ -39,6 +39,8 @@ public abstract class BaseController {
                 scene.getStylesheets().clear();
                 break;
             default:
+                scene.getStylesheets().clear();
+                setTheme(Theme.LIGHT);
         }
     }
 
@@ -48,7 +50,11 @@ public abstract class BaseController {
     }
 
     public static void setTheme(String theme) {
-        setTheme(Theme.valueOf(theme.toUpperCase()));
+        try {
+            setTheme(Theme.valueOf(theme.toUpperCase()));
+        } catch(IllegalArgumentException iae) {
+            setTheme(Theme.LIGHT);
+        }
     }
 
     public static Theme getTheme() {
@@ -57,5 +63,6 @@ public abstract class BaseController {
 
     public static void setTheme(Theme theme) {
         BaseController.theme = theme;
+        manager.getSettings().setProperty("theme", theme.toString());
     }
 }

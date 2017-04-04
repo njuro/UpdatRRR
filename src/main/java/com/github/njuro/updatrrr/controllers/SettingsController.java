@@ -67,7 +67,6 @@ public class SettingsController extends BaseController {
         }
         if (chosenTheme != null) {
             setTheme(chosenTheme);
-            manager.getSettings().setProperty("theme", theme.toString());
         }
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
