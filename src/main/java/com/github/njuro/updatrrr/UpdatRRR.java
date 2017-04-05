@@ -169,7 +169,7 @@ public class UpdatRRR implements StyleManager {
         return styles;
     }
 
-    public ObjectMapper getMapper() {
+    private ObjectMapper getMapper() {
         return mapper;
     }
 
