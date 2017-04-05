@@ -69,7 +69,6 @@ public class MainController extends BaseController {
             protected void updateItem(Style item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? "Unnamed style" : item.getName());
-                selectedStyle = item;
             }
         };
         cbStyles.setCellFactory(factory);
@@ -124,6 +123,7 @@ public class MainController extends BaseController {
 
     @FXML
     private void refreshStyle() {
+        selectedStyle = cbStyles.getSelectionModel().getSelectedItem();
         if (selectedStyle != null) {
             lbStatusRight.setText(selectedStyle.getName());
             tfName.setText(selectedStyle.getName());
@@ -146,6 +146,7 @@ public class MainController extends BaseController {
         }
         try {
             manager.saveStyles();
+            refreshComboBox();
             refreshStyle();
         } catch (DatabaseFileException dbe) {
             new AlertBuilder(Alert.AlertType.ERROR)
@@ -163,9 +164,6 @@ public class MainController extends BaseController {
                 .content("Database successfully saved")
                 .createAlert()
                 .showAndWait();
-
-        manager.getStyles().sort(Comparator.comparing(Style::getDate).reversed());
-        cbStyles.getItems().setAll(manager.getStyles());
     }
 
     @FXML
@@ -277,5 +275,11 @@ public class MainController extends BaseController {
                     .createAlert()
                     .showAndWait();
         }
+    }
+
+    private void refreshComboBox() {
+        Style prevStyle = selectedStyle;
+        cbStyles.getSelectionModel().select(null);
+        cbStyles.getSelectionModel().select(prevStyle);
     }
 }
