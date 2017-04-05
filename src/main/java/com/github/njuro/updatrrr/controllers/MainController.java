@@ -105,12 +105,20 @@ public class MainController extends BaseController {
                     }
                 });
             } else {
-                new AlertBuilder(Alert.AlertType.ERROR)
+                Alert errorLoading = new AlertBuilder(Alert.AlertType.ERROR)
                         .title("Error!")
                         .header("Error loading database")
                         .content("Error loading file: " + dbe.getMessage())
-                        .createAlert()
-                        .showAndWait();
+                        .createAlert();
+                errorLoading.getDialogPane().setMinWidth(600);
+                ButtonType exitButton = new ButtonType("Exit", ButtonBar.ButtonData.CANCEL_CLOSE);
+                errorLoading.getButtonTypes().setAll(ButtonType.OK, exitButton);
+                Optional<ButtonType> response = errorLoading.showAndWait();
+                response.ifPresent(buttonType -> {
+                    if (buttonType.getButtonData().isCancelButton()) {
+                        System.exit(0);
+                    }
+                });
             }
             if (previousDatabaseFile != null) {
                 manager.setDatabaseFile(previousDatabaseFile);
