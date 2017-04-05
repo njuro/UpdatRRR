@@ -93,8 +93,8 @@ public class MainController extends BaseController {
         } catch (DatabaseFileException dbe) {
             if (manager.getDatabaseFile() == null || manager.getSettings().getProperty("dbpath").equals("")) {
                 Alert firstRun = new AlertBuilder(Alert.AlertType.INFORMATION)
-                        .title("Welcome to UpdatRRR")
-                        .header("Welcome!")
+                        .title("Welcome!")
+                        .header("Welcome to UpdatRRR")
                         .content("Please specify the path to your StylRRR database file")
                         .createAlert();
                 firstRun.getDialogPane().setMinWidth(600);
@@ -107,7 +107,7 @@ public class MainController extends BaseController {
                 });
             } else {
                 new AlertBuilder(Alert.AlertType.ERROR)
-                        .title("Error")
+                        .title("Error!")
                         .header("Error loading database")
                         .content("Error loading file: " + dbe.getMessage())
                         .createAlert()
@@ -149,7 +149,7 @@ public class MainController extends BaseController {
             refreshStyle();
         } catch (DatabaseFileException dbe) {
             new AlertBuilder(Alert.AlertType.ERROR)
-                    .title("Saving failed")
+                    .title("Saving failed!")
                     .header("Error saving database")
                     .content("Error saving styles to the database at " + dbe.getDatabaseFile().getAbsolutePath() + ": "
                             + dbe.getMessage())
@@ -159,7 +159,7 @@ public class MainController extends BaseController {
         }
 
         new AlertBuilder(Alert.AlertType.INFORMATION)
-                .title("Saved successfully")
+                .title("Saving succeeded!")
                 .content("Database successfully saved")
                 .createAlert()
                 .showAndWait();
@@ -180,8 +180,8 @@ public class MainController extends BaseController {
             refreshStyle();
         } catch (StyleException se) {
             new AlertBuilder(Alert.AlertType.ERROR)
-                    .title("Update failed")
-                    .header("Update failed")
+                    .title("Update failed!")
+                    .header("Error updating style")
                     .content("Getting update for " + se.getStyle().getName() + " failed: " + se.getMessage())
                     .createAlert()
                     .showAndWait();
@@ -190,7 +190,7 @@ public class MainController extends BaseController {
 
         if (result != null) {
             new AlertBuilder(Alert.AlertType.INFORMATION)
-                    .title("Update successfull")
+                    .title("Update succeeded")
                     .header(selectedStyle.getName() + " updated!")
                     .content("Style " + selectedStyle.getName() + " was updated from version " + result +
                             " to version  " + selectedStyle.getDateString())
@@ -199,8 +199,8 @@ public class MainController extends BaseController {
             saveStyles();
         } else {
             new AlertBuilder(Alert.AlertType.INFORMATION)
-                    .title("Update not found")
-                    .header("Update not found")
+                    .title("Update not found!")
+                    .header("Update was not found")
                     .content(selectedStyle.getName() + " is already the most recent version ("
                             + selectedStyle.getDateString() + ")")
                     .createAlert()
@@ -232,8 +232,8 @@ public class MainController extends BaseController {
         }
 
         Alert updateResults = new AlertBuilder(Alert.AlertType.INFORMATION)
-                .title("Update completed")
-                .header("All updated completes")
+                .title("Updates completed!")
+                .header("All updates were completed")
                 .createAlert();
         Label label = new Label(
                 String.format("Styles: %d | Updated: %d | Not updated: %d | Failed: %d",
@@ -271,7 +271,7 @@ public class MainController extends BaseController {
             initializeStyles();
         } catch (IOException ioe) {
             new AlertBuilder(Alert.AlertType.ERROR)
-                    .title("Error")
+                    .title("Error!")
                     .header("Error opening settings")
                     .content("Settings could not be opened: " + ioe.getMessage())
                     .createAlert()

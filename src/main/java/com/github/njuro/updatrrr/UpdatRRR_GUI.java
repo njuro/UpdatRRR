@@ -33,7 +33,7 @@ public class UpdatRRR_GUI extends Application {
             ICON = new Image(UpdatRRR.getResource("img/icon.png").openStream());
         } catch (IOException ioe) {
             new AlertBuilder(Alert.AlertType.ERROR)
-                    .title("Properties file error")
+                    .title("Error!")
                     .header("Error loading properties")
                     .content("Error loading properties file: " + ioe.getMessage())
                     .createAlert()
@@ -56,7 +56,7 @@ public class UpdatRRR_GUI extends Application {
                     manager.getSettings().store(new FileOutputStream(UpdatRRR.PROPERTIES_FILE), "UpdatRRR config file");
                 } catch (IOException ioe) {
                     new AlertBuilder(Alert.AlertType.ERROR)
-                            .title("Properties file error")
+                            .title("Error!")
                             .header("Error saving properties")
                             .content("Error loading properties file: " + ioe.getMessage())
                             .createAlert()
@@ -69,7 +69,7 @@ public class UpdatRRR_GUI extends Application {
             stage.show();
         } catch (IOException ioe) {
             new AlertBuilder(Alert.AlertType.ERROR)
-                    .title("Failed to load UpdatRRR")
+                    .title("Error!")
                     .header("Failed to load UpdatRRR")
                     .content("Application could not be loaded: " + ioe.getMessage())
                     .createAlert()
