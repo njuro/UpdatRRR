@@ -114,6 +114,7 @@ public class Style {
         return namE + ":" +
                 "\n\tAuthor: " + author +
                 "\n\tURL: " + url +
-                "\n\tLast updated: " + datE;
+                "\n\tLast updated: " + datE +
+                "\n\tEnabled: " + isEnabled();
     }
 }
