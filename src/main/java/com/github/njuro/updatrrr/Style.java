@@ -16,11 +16,11 @@ public class Style {
 
     //attributes must have same name as in StylRRR file to make JSON Object mapping possible
     private int id;
-    private String namE;
-    private String author;
-    private String url;
-    private String datE;
-    private String stylE;
+    private String namE = "-";
+    private String author = "-";
+    private String url = "-";
+    private String datE = "-";
+    private String stylE = "-";
     private boolean enabled;
 
     public Style() {
@@ -111,6 +111,9 @@ public class Style {
 
     @Override
     public String toString() {
-        return String.format("%s | %s | CURRENT VERSION: %s", this.namE, this.url, getDateString());
+        return namE + ":" +
+                "\n\tAuthor: " + author +
+                "\n\tURL: " + url +
+                "\n\tLast updated: " + datE;
     }
 }
