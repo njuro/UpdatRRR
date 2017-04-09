@@ -14,8 +14,14 @@ import java.util.Scanner;
 public class UpdatRRR_CLI {
     private static UpdatRRR manager;
 
+    //prompt to use
     private static final String PREFIX = "updatrrr> ";
 
+    /**
+     * Parses input and launches appropiate command
+     *
+     * @param command user input
+     */
     private static void parseCommand(String command) {
         String[] args = command.split(" ");
         switch (args[0].trim().toLowerCase()) {
@@ -58,6 +64,9 @@ public class UpdatRRR_CLI {
         }
     }
 
+    /**
+     * Prints list of available commands and what they do
+     */
     private static void printHelp() {
         System.out.println("Help:");
         System.out.println("\tlist - Displays all styles with their indexes");
@@ -69,12 +78,21 @@ public class UpdatRRR_CLI {
         System.out.println("\texit - Exits UpdatRRR");
     }
 
+    /**
+     * Prints all styles with their indexes
+     */
     private static void printAll() {
         for (int i = 0; i < manager.getStyles().size(); i++) {
             System.out.println((i + 1) + ". " + manager.getStyles().get(i).getName());
         }
     }
 
+    /**
+     * Tries to replace style with more recent version
+     *
+     * @param index of style
+     * @return 0 if URL is invalid, 1 if style is already the most recent version, 2 if style was updated
+     */
     private static int update(int index) {
         if (!checkValidIndex(index)) return 0;
         String result;
@@ -94,6 +112,9 @@ public class UpdatRRR_CLI {
         return 2;
     }
 
+    /**
+     * Tries to update all styles and prints the results
+     */
     private static void updateAll() {
         int updated = 0;
         int notUpdated = 0;
@@ -115,6 +136,9 @@ public class UpdatRRR_CLI {
                 updated, notUpdated, failed);
     }
 
+    /**
+     * Saves styles to database file
+     */
     private static void save() {
         try {
             manager.saveStyles();
@@ -122,14 +146,25 @@ public class UpdatRRR_CLI {
             System.out.println("Saving failed: " + dbe.getMessage());
             return;
         }
-        System.out.println("Saving successful");
+        System.out.println("Saved successfully to " + manager.getDatabaseFile().getAbsolutePath());
     }
 
+    /**
+     * Displays detailed info about style
+     *
+     * @param index of style
+     */
     private static void printInfo(int index) {
         if (!checkValidIndex(index)) return;
         System.out.println(manager.getStyles().get(index - 1));
     }
 
+    /**
+     * Checks whether the style index is in valid range
+     *
+     * @param index of style
+     * @return true if index is in interval <1, numOfStyles>
+     */
     private static boolean checkValidIndex(int index) {
         if (index < 1 || index > manager.getStyles().size()) {
             System.out.println("Invalid index.");
@@ -146,12 +181,13 @@ public class UpdatRRR_CLI {
             manager.loadStyles();
         } catch (DatabaseFileException dbe) {
             System.out.println("Failed to load styles: " + dbe.getMessage());
+            System.out.println("Please edit the dbpath in updatrrr.properties file");
             failed = true;
         } catch (IOException ioe) {
-            System.out.println("Failed to launch properties file: " + ioe.getMessage());
+            System.out.println("Failed to load cproperties file: " + ioe.getMessage());
             failed = true;
         }
-        String command = "";
+        String command;
         try (Scanner input = new Scanner(System.in)) {
             if (failed) {
                 System.out.println("Press any key to exit...");
