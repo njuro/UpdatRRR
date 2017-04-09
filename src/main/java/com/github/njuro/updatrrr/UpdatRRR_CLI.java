@@ -7,18 +7,20 @@ import java.io.IOException;
 import java.util.Scanner;
 
 /**
- * CLI for UpdatRRR
+ * CLI for UpdatRRR.
+ *
+ * Correct path to StylRRR database must be specified in "updatrrr.properties" file (dbpath parameter)
  *
  * @author njuro
  */
 public class UpdatRRR_CLI {
     private static UpdatRRR manager;
 
-    //prompt to use
+    //prompt string
     private static final String PREFIX = "updatrrr> ";
 
     /**
-     * Parses input and launches appropiate command
+     * Parses input and executes appropriate command
      *
      * @param command user input
      */
@@ -60,7 +62,7 @@ public class UpdatRRR_CLI {
                 System.exit(0);
                 break;
             default:
-                System.out.println("Unknown command - \"" + command + "\". Type \"help\" for list of available commands");
+                System.out.println("Unknown command \"" + command + "\". Type \"help\" for list of available commands");
         }
     }
 
@@ -69,17 +71,17 @@ public class UpdatRRR_CLI {
      */
     private static void printHelp() {
         System.out.println("Help:");
-        System.out.println("\tlist - Displays all styles with their indexes");
-        System.out.println("\tupdate <index> - Update style with more recent version, if such version exists");
+        System.out.println("\tlist - Displays all styles along with their indices");
+        System.out.println("\tupdate <index> - Updates style with more recent version, if such version is found");
         System.out.println("\tupdate-all - Updates all styles");
-        System.out.println("\tsave - Save styles to the database");
+        System.out.println("\tsave - Saves styles to the database");
         System.out.println("\tinfo <index> - Displays detailed info about style");
         System.out.println("\thelp - Displays this help");
         System.out.println("\texit - Exits UpdatRRR");
     }
 
     /**
-     * Prints all styles with their indexes
+     * Prints all styles along with their indices
      */
     private static void printAll() {
         for (int i = 0; i < manager.getStyles().size(); i++) {
@@ -88,10 +90,10 @@ public class UpdatRRR_CLI {
     }
 
     /**
-     * Tries to replace style with more recent version
+     * Tries to replace style with a more recent version, if such version is found
      *
      * @param index of style
-     * @return 0 if URL is invalid, 1 if style is already the most recent version, 2 if style was updated
+     * @return 0 if provided URL is invalid, 1 if style is already the most recent version, 2 if style was updated
      */
     private static int update(int index) {
         if (!checkValidIndex(index)) return 0;
@@ -163,7 +165,7 @@ public class UpdatRRR_CLI {
      * Checks whether the style index is in valid range
      *
      * @param index of style
-     * @return true if index is in interval <1, numOfStyles>
+     * @return true if index is in interval <1, numOfStyles)
      */
     private static boolean checkValidIndex(int index) {
         if (index < 1 || index > manager.getStyles().size()) {
@@ -179,18 +181,19 @@ public class UpdatRRR_CLI {
         try {
             manager = new UpdatRRR();
             manager.loadStyles();
+            System.out.println("Loaded " + manager.getStyles().size() + " styles from " + manager.getDatabaseFile().getAbsolutePath());
         } catch (DatabaseFileException dbe) {
             System.out.println("Failed to load styles: " + dbe.getMessage());
-            System.out.println("Please edit the dbpath in updatrrr.properties file");
+            System.out.println("Please fill in \"dbpath\" in updatrrr.properties file");
             failed = true;
         } catch (IOException ioe) {
-            System.out.println("Failed to load cproperties file: " + ioe.getMessage());
+            System.out.println("Failed to load properties file: " + ioe.getMessage());
             failed = true;
         }
         String command;
         try (Scanner input = new Scanner(System.in)) {
             if (failed) {
-                System.out.println("Press any key to exit...");
+                System.out.println("Press ENTER to exit...");
                 input.nextLine();
                 System.exit(1);
             }
